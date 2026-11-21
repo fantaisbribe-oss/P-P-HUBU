@@ -1,0 +1,785 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // =========================================================================
+    // 1. GLOBAL SAFETY NET — DEFAULT DENY EVERYTHING
+    // =========================================================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // =========================================================================
+    // 2. CORE PRIMITIVES & IDENTITY HELPERS
+    // =========================================================================
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_-]+$');
+    }
+
+    function isValidBranchId(id) {
+      return id is string && id.size() >= 3 && id.size() <= 40 && id.matches('^[A-Z0-9-]+$');
+    }
+
+    function isValidDateKey(dt) {
+      return dt is string && dt.size() == 10 && dt.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$');
+    }
+
+    function isValidSenderId(sid) {
+      return sid is string && sid.size() >= 5 && sid.size() <= 32 && sid.matches('^SND-[0-9]{4,8}$');
+    }
+
+    // Ghana is UTC+0 all year with no daylight saving; request.time matches Ghana calendar date.
+    function pad2(n) {
+      return n < 10 ? '0' + string(n) : string(n);
+    }
+
+    function todayUtc() {
+      return string(request.time.year()) + '-' + pad2(request.time.month()) + '-' + pad2(request.time.day());
+    }
+
+    function meExists() {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function meData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isActiveStaff() {
+      return meExists()
+        && meData().active == true
+        && (meData().role == 'manager' || meData().role == 'operator');
+    }
+
+    function staffBranch() {
+      return meData().branchId;
+    }
+
+    function isActiveStaffOf(branchId) {
+      return isActiveStaff() && meData().branchId == branchId;
+    }
+
+    function isBranchManager(branchId) {
+      return isActiveStaff() && meData().branchId == branchId && meData().role == 'manager';
+    }
+
+    function isActiveStaffPerm(perm) {
+      return isActiveStaff()
+        && (meData().role == 'manager' || meData().permissions[perm] == true);
+    }
+
+    function isStaffWithPerm(branchId, perm) {
+      return isActiveStaff()
+        && meData().branchId == branchId
+        && (meData().role == 'manager' || meData().permissions[perm] == true);
+    }
+
+    function isBranchOwnerDoc(branchId) {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/branches/$(branchId))
+        && get(/databases/$(database)/documents/branches/$(branchId)).data.ownerUid == request.auth.uid;
+    }
+
+    function isSender() {
+      return meExists() && meData().role == 'sender';
+    }
+
+    // =========================================================================
+    // 3. SCHEMA VALIDATION BLUEPRINTS (ANTI-UPDATE-GAP & NO SHADOW FIELDS)
+    // =========================================================================
+    function isValidPermissions(perms) {
+      return perms is map
+        && perms.keys().hasAll([
+          'viewFiles', 'updateStatus', 'recordBilling',
+          'viewFinance', 'deleteFiles', 'manageCodes', 'manageStaff'
+        ])
+        && perms.keys().hasOnly([
+          'viewFiles', 'updateStatus', 'recordBilling',
+          'viewFinance', 'deleteFiles', 'manageCodes', 'manageStaff'
+        ])
+        && perms.viewFiles is bool
+        && perms.updateStatus is bool
+        && perms.recordBilling is bool
+        && perms.viewFinance is bool
+        && perms.deleteFiles is bool
+        && perms.manageCodes is bool
+        && perms.manageStaff is bool;
+    }
+
+    function isValidStaffUser(data, userId) {
+      return data.keys().hasAll([
+          'uid', 'role', 'branchId', 'fullName', 'username', 'active', 'permissions', 'createdAt'
+        ])
+        && data.keys().hasOnly([
+          'uid', 'role', 'branchId', 'fullName', 'username', 'active', 'permissions', 'createdAt'
+        ])
+        && data.uid == userId
+        && (data.role == 'manager' || data.role == 'operator')
+        && isValidBranchId(data.branchId)
+        && data.fullName is string && data.fullName.size() >= 1 && data.fullName.size() <= 120
+        && data.username is string && data.username.size() >= 2 && data.username.size() <= 64
+        && data.active is bool
+        && isValidPermissions(data.permissions)
+        && data.createdAt is timestamp;
+    }
+
+    function isValidSenderUser(data, userId) {
+      return data.keys().hasAll(['uid', 'role', 'senderId', 'name', 'phone', 'createdAt'])
+        && data.keys().hasOnly(['uid', 'role', 'senderId', 'name', 'phone', 'createdAt'])
+        && data.uid == userId
+        && data.role == 'sender'
+        && isValidSenderId(data.senderId)
+        && data.name is string && data.name.size() >= 1 && data.name.size() <= 120
+        && data.phone is string && data.phone.size() <= 40
+        && data.createdAt is timestamp;
+    }
+
+    function isValidBranchPublic(data, branchId) {
+      return data.keys().hasAll(['branchId', 'name', 'area', 'city', 'phone', 'ownerUid', 'quotaFull', 'createdAt'])
+        && data.keys().hasOnly(['branchId', 'name', 'area', 'city', 'phone', 'ownerUid', 'quotaFull', 'createdAt'])
+        && data.branchId == branchId
+        && isValidBranchId(branchId)
+        && data.name is string && data.name.size() >= 2 && data.name.size() <= 120
+        && data.area is string && data.area.size() >= 1 && data.area.size() <= 120
+        && data.city is string && data.city.size() >= 1 && data.city.size() <= 80
+        && data.phone is string && data.phone.size() <= 40
+        && data.ownerUid is string && data.ownerUid.size() >= 1 && data.ownerUid.size() <= 128
+        && data.quotaFull is bool
+        && data.createdAt is timestamp;
+    }
+
+    function isValidBranchPrivate(data, branchId) {
+      return data.keys().hasAll([
+          'branchId', 'name', 'area', 'city', 'phone',
+          'storageQuotaMB', 'retentionDays', 'storageUsedBytes', 'ownerUid', 'createdAt'
+        ])
+        && data.keys().hasOnly([
+          'branchId', 'name', 'area', 'city', 'phone',
+          'storageQuotaMB', 'retentionDays', 'storageUsedBytes', 'ownerUid', 'createdAt'
+        ])
+        && data.branchId == branchId
+        && isValidBranchId(branchId)
+        && data.name is string && data.name.size() >= 2 && data.name.size() <= 120
+        && data.area is string && data.area.size() >= 1 && data.area.size() <= 120
+        && data.city is string && data.city.size() >= 1 && data.city.size() <= 80
+        && data.phone is string && data.phone.size() <= 40
+        && data.storageQuotaMB is number && data.storageQuotaMB >= 100 && data.storageQuotaMB <= 1048576
+        && data.retentionDays is number && data.retentionDays >= 1 && data.retentionDays <= 3650
+        && data.storageUsedBytes is number && data.storageUsedBytes >= 0
+        && data.ownerUid is string && data.ownerUid.size() >= 1 && data.ownerUid.size() <= 128
+        && data.createdAt is timestamp;
+    }
+
+    function isValidDailyCode(data, branchId, dateKey) {
+      return data.keys().hasAll(['code', 'date', 'branchId', 'createdBy', 'createdAt'])
+        && data.keys().hasOnly(['code', 'date', 'branchId', 'createdBy', 'createdAt'])
+        && data.branchId == branchId
+        && data.date == dateKey
+        && isValidDateKey(dateKey)
+        && data.code is string && data.code.size() >= 5 && data.code.size() <= 20 && data.code.matches('^[A-Z0-9-]+$')
+        && data.createdBy is string && data.createdBy.size() >= 1 && data.createdBy.size() <= 120
+        && data.createdAt is timestamp;
+    }
+
+    function isValidBilling(b) {
+      return b is map
+        && b.keys().hasAll([
+          'serviceType', 'copies', 'pages', 'unitPrice',
+          'totalAmount', 'amountPaid', 'paymentMethod', 'paymentDate'
+        ])
+        && b.keys().hasOnly([
+          'serviceType', 'copies', 'pages', 'unitPrice',
+          'totalAmount', 'amountPaid', 'paymentMethod', 'paymentDate'
+        ])
+        && b.serviceType is string && b.serviceType.size() >= 1 && b.serviceType.size() <= 80
+        && b.copies is number && b.copies >= 0 && b.copies <= 1000000
+        && b.pages is number && b.pages >= 0 && b.pages <= 1000000
+        && b.unitPrice is number && b.unitPrice >= 0 && b.unitPrice <= 1000000
+        && b.totalAmount is number && b.totalAmount >= 0 && b.totalAmount <= 10000000
+        && b.amountPaid is number && b.amountPaid >= 0 && b.amountPaid <= 10000000
+        && b.paymentMethod in ['Cash', 'MoMo', 'Bank Transfer', 'Unpaid']
+        && isValidDateKey(b.paymentDate);
+    }
+
+    function isValidFilesList(files) {
+      return files is list
+        && files.size() <= 25
+        && (
+          files.size() == 0
+          || (
+            files[0] is map
+            && files[0].keys().hasAll(['fileId', 'originalName', 'type', 'ext', 'sizeBytes', 'storagePath', 'pagesPreview'])
+            && files[0].keys().hasOnly(['fileId', 'originalName', 'type', 'ext', 'sizeBytes', 'storagePath', 'pagesPreview'])
+            && files[0].fileId is string && files[0].fileId.size() <= 64
+            && files[0].originalName is string && files[0].originalName.size() <= 200
+            && files[0].type in ['image', 'pdf', 'word', 'excel', 'ppt', 'zip']
+            && files[0].ext is string && files[0].ext.size() <= 12
+            && files[0].sizeBytes is number && files[0].sizeBytes >= 0 && files[0].sizeBytes <= 52428800
+            && files[0].storagePath is string && files[0].storagePath.size() <= 400
+            && files[0].pagesPreview is string && files[0].pagesPreview.size() <= 300
+          )
+        );
+    }
+
+    function isValidSubmission(data, submissionId) {
+      return data.keys().hasAll([
+          'id', 'branchId', 'senderUid', 'senderId', 'senderName', 'customName',
+          'dailyCode', 'year', 'month', 'day', 'date', 'time', 'status',
+          'assignedTo', 'billing', 'files', 'createdAt'
+        ])
+        && data.keys().hasOnly([
+          'id', 'branchId', 'senderUid', 'senderId', 'senderName', 'customName',
+          'dailyCode', 'year', 'month', 'day', 'date', 'time', 'status',
+          'assignedTo', 'billing', 'files', 'createdAt'
+        ])
+        && data.id == submissionId
+        && isValidBranchId(data.branchId)
+        && data.senderUid is string && data.senderUid.size() >= 1 && data.senderUid.size() <= 128
+        && isValidSenderId(data.senderId)
+        && data.senderName is string && data.senderName.size() >= 1 && data.senderName.size() <= 120
+        && data.customName is string && data.customName.size() <= 180
+        && data.dailyCode is string && data.dailyCode.size() >= 5 && data.dailyCode.size() <= 20
+        && data.year is number && data.year >= 2024 && data.year <= 2100
+        && data.month is number && data.month >= 0 && data.month <= 11
+        && data.day is number && data.day >= 1 && data.day <= 31
+        && isValidDateKey(data.date)
+        && data.time is string && data.time.size() >= 1 && data.time.size() <= 24
+        && data.status in [
+          'Uploading', 'Received', 'Processing', 'Ready for Printing',
+          'Printing', 'Printed', 'Ready for Collection', 'Collected'
+        ]
+        && data.assignedTo is string && data.assignedTo.size() <= 120
+        && isValidBilling(data.billing)
+        && isValidFilesList(data.files)
+        && data.createdAt is timestamp;
+    }
+
+    function isValidFileChunk(data, submissionId) {
+      return data.keys().hasAll([
+          'submissionId', 'branchId', 'senderUid', 'fileId',
+          'chunkIndex', 'totalChunks', 'mimeType', 'data', 'createdAt'
+        ])
+        && data.keys().hasOnly([
+          'submissionId', 'branchId', 'senderUid', 'fileId',
+          'chunkIndex', 'totalChunks', 'mimeType', 'data', 'createdAt'
+        ])
+        && data.submissionId == submissionId
+        && isValidBranchId(data.branchId)
+        && data.senderUid is string && data.senderUid.size() >= 1 && data.senderUid.size() <= 128
+        && data.fileId is string && data.fileId.size() >= 4 && data.fileId.size() <= 64 && data.fileId.matches('^[a-zA-Z0-9_-]+$')
+        && data.chunkIndex is number && data.chunkIndex >= 0 && data.chunkIndex <= 100
+        && data.totalChunks is number && data.totalChunks >= 1 && data.totalChunks <= 100
+        && data.chunkIndex < data.totalChunks
+        && data.mimeType is string && data.mimeType.size() >= 3 && data.mimeType.size() <= 140
+        && data.data is string && data.data.size() >= 1 && data.data.size() <= 750000
+        && data.createdAt is timestamp;
+    }
+
+    function isValidExpense(data, expenseId) {
+      return data.keys().hasAll(['id', 'branchId', 'date', 'category', 'description', 'amount', 'recordedBy', 'createdAt'])
+        && data.keys().hasOnly(['id', 'branchId', 'date', 'category', 'description', 'amount', 'recordedBy', 'createdAt'])
+        && data.id == expenseId
+        && isValidBranchId(data.branchId)
+        && isValidDateKey(data.date)
+        && data.category is string && data.category.size() >= 1 && data.category.size() <= 80
+        && data.description is string && data.description.size() >= 1 && data.description.size() <= 240
+        && data.amount is number && data.amount > 0 && data.amount <= 10000000
+        && data.recordedBy is string && data.recordedBy.size() >= 1 && data.recordedBy.size() <= 120
+        && data.createdAt is timestamp;
+    }
+
+    function isValidActivity(data, activityId) {
+      return data.keys().hasAll(['id', 'branchId', 'user', 'action', 'target', 'date', 'time', 'createdAt'])
+        && data.keys().hasOnly(['id', 'branchId', 'user', 'action', 'target', 'date', 'time', 'createdAt'])
+        && data.id == activityId
+        && isValidBranchId(data.branchId)
+        && data.user is string && data.user.size() >= 1 && data.user.size() <= 140
+        && data.action is string && data.action.size() >= 1 && data.action.size() <= 320
+        && data.target is string && data.target.size() >= 1 && data.target.size() <= 120
+        && isValidDateKey(data.date)
+        && data.time is string && data.time.size() >= 1 && data.time.size() <= 24
+        && data.createdAt is timestamp;
+    }
+
+    function isValidNotification(data, notifId) {
+      return data.keys().hasAll(['id', 'branchId', 'type', 'title', 'msg', 'read', 'createdAt'])
+        && data.keys().hasOnly(['id', 'branchId', 'type', 'title', 'msg', 'read', 'createdAt'])
+        && data.id == notifId
+        && isValidBranchId(data.branchId)
+        && data.type in ['submission', 'payment', 'code', 'job', 'system']
+        && data.title is string && data.title.size() >= 1 && data.title.size() <= 140
+        && data.msg is string && data.msg.size() >= 1 && data.msg.size() <= 400
+        && data.read is bool
+        && data.createdAt is timestamp;
+    }
+
+    // =========================================================================
+    // 4. COLLECTION RULES
+    // =========================================================================
+
+    // PUBLIC BRANCH DIRECTORY (no private settings or PII; branch contact info only)
+    match /branchPublic/{branchId} {
+      allow get: if isSignedIn() && isValidBranchId(branchId);
+      allow list: if isSignedIn() && resource.data.quotaFull in [true, false];
+
+      // Created atomically alongside branches/{branchId} by the new branch owner
+      allow create: if isSignedIn()
+        && isValidBranchPublic(incoming(), branchId)
+        && incoming().ownerUid == request.auth.uid
+        && incoming().createdAt == request.time
+        && !exists(/databases/$(database)/documents/branches/$(branchId))
+        && getAfter(/databases/$(database)/documents/branches/$(branchId)).data.ownerUid == request.auth.uid;
+
+      // Branch manager updates profile or quotaFull; active staff can sync quotaFull
+      allow update: if isSignedIn()
+        && isValidBranchPublic(incoming(), branchId)
+        && incoming().ownerUid == existing().ownerUid
+        && incoming().createdAt == existing().createdAt
+        && (
+          (isBranchManager(branchId) && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'area', 'city', 'phone', 'quotaFull']))
+          || (isActiveStaffOf(branchId) && incoming().diff(existing()).affectedKeys().hasOnly(['quotaFull']))
+        );
+
+      allow delete: if false;
+    }
+
+    // PRIVATE BRANCH SETTINGS & DAILY CODES
+    match /branches/{branchId} {
+      allow get: if isSignedIn() && isValidBranchId(branchId) && (
+        resource.data.ownerUid == request.auth.uid
+        || isActiveStaffOf(branchId)
+      );
+      allow list: if false;
+
+      // Atomic new branch creation paired with manager users/{uid}
+      allow create: if isSignedIn()
+        && isValidBranchPrivate(incoming(), branchId)
+        && incoming().ownerUid == request.auth.uid
+        && incoming().storageUsedBytes == 0
+        && incoming().createdAt == request.time
+        && !exists(/databases/$(database)/documents/branches/$(branchId))
+        && getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.branchId == branchId
+        && getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'manager';
+
+      // Manager updates settings; staff with deleteFiles updates storageUsedBytes; sender finalizing upload increments storageUsedBytes within quota
+      allow update: if isSignedIn()
+        && isValidBranchPrivate(incoming(), branchId)
+        && incoming().ownerUid == existing().ownerUid
+        && incoming().createdAt == existing().createdAt
+        && (
+          (isBranchManager(branchId) && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'area', 'city', 'phone', 'storageQuotaMB', 'retentionDays', 'storageUsedBytes']))
+          || (isStaffWithPerm(branchId, 'deleteFiles') && incoming().diff(existing()).affectedKeys().hasOnly(['storageUsedBytes']))
+          || (
+            isSender()
+            && incoming().diff(existing()).affectedKeys().hasOnly(['storageUsedBytes'])
+            && incoming().storageUsedBytes >= existing().storageUsedBytes
+            && incoming().storageUsedBytes <= existing().storageUsedBytes + 524288000
+            && incoming().storageUsedBytes <= existing().storageQuotaMB * 1024 * 1024 + 52428800
+          )
+        );
+
+      allow delete: if false;
+
+      // DAILY SUBMISSION CODES SUBCOLLECTION (Staff only — never readable by senders!)
+      match /dailyCodes/{dateKey} {
+        allow get: if isSignedIn() && isValidBranchId(branchId) && isValidDateKey(dateKey) && (
+          isBranchOwnerDoc(branchId)
+          || isActiveStaffOf(branchId)
+        );
+
+        allow list: if isSignedIn()
+          && resource.data.branchId == branchId
+          && (
+            isBranchOwnerDoc(branchId)
+            || (isActiveStaff() && staffBranch() == branchId)
+          );
+
+        allow create: if isSignedIn()
+          && isValidDailyCode(incoming(), branchId, dateKey)
+          && incoming().createdAt == request.time
+          && (
+            isStaffWithPerm(branchId, 'manageCodes')
+            || (
+              !exists(/databases/$(database)/documents/branches/$(branchId))
+              && getAfter(/databases/$(database)/documents/branches/$(branchId)).data.ownerUid == request.auth.uid
+            )
+          );
+
+        allow update: if isSignedIn()
+          && isValidDailyCode(incoming(), branchId, dateKey)
+          && incoming().createdAt == request.time
+          && isStaffWithPerm(branchId, 'manageCodes')
+          && incoming().diff(existing()).affectedKeys().hasOnly(['code', 'createdBy', 'createdAt']);
+
+        allow delete: if false;
+      }
+    }
+
+    // USER PROFILES (MANAGERS, OPERATORS, SENDERS) — NO SECRETS STORED
+    match /users/{userId} {
+      allow get: if isSignedIn() && isValidId(userId) && (
+        request.auth.uid == userId
+        || (resource.data.role in ['manager', 'operator'] && isStaffWithPerm(resource.data.branchId, 'manageStaff'))
+      );
+
+      allow list: if isSignedIn()
+        && resource.data.role in ['manager', 'operator']
+        && isActiveStaffPerm('manageStaff')
+        && resource.data.branchId == staffBranch();
+
+      allow create: if isSignedIn()
+        && isValidId(userId)
+        && incoming().createdAt == request.time
+        && (
+          // Path A: Brand-new customer self-registers as 'sender'
+          (
+            request.auth.uid == userId
+            && isValidSenderUser(incoming(), userId)
+          )
+          ||
+          // Path B: Brand-new manager registers alongside a NEW branch they own
+          (
+            request.auth.uid == userId
+            && incoming().role == 'manager'
+            && incoming().active == true
+            && incoming().permissions.viewFiles == true
+            && incoming().permissions.updateStatus == true
+            && incoming().permissions.recordBilling == true
+            && incoming().permissions.viewFinance == true
+            && incoming().permissions.deleteFiles == true
+            && incoming().permissions.manageCodes == true
+            && incoming().permissions.manageStaff == true
+            && isValidStaffUser(incoming(), userId)
+            && !exists(/databases/$(database)/documents/branches/$(incoming().branchId))
+            && getAfter(/databases/$(database)/documents/branches/$(incoming().branchId)).data.ownerUid == request.auth.uid
+          )
+          ||
+          // Path C: Active manager with manageStaff creates an operator for THEIR branch
+          (
+            request.auth.uid != userId
+            && incoming().role == 'operator'
+            && isValidStaffUser(incoming(), userId)
+            && isStaffWithPerm(incoming().branchId, 'manageStaff')
+          )
+        );
+
+      allow update: if isSignedIn()
+        && isValidId(userId)
+        && incoming().uid == existing().uid
+        && incoming().role == existing().role
+        && incoming().createdAt == existing().createdAt
+        && (
+          // Sender updates own name/phone
+          (
+            request.auth.uid == userId
+            && existing().role == 'sender'
+            && isValidSenderUser(incoming(), userId)
+            && incoming().senderId == existing().senderId
+            && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'phone'])
+          )
+          ||
+          // Manager with manageStaff toggles operator active/permissions/fullName in THEIR branch (never self)
+          (
+            request.auth.uid != userId
+            && existing().role == 'operator'
+            && isValidStaffUser(incoming(), userId)
+            && incoming().branchId == existing().branchId
+            && incoming().username == existing().username
+            && isStaffWithPerm(existing().branchId, 'manageStaff')
+            && incoming().diff(existing()).affectedKeys().hasOnly(['active', 'permissions', 'fullName'])
+          )
+        );
+
+      allow delete: if isSignedIn()
+        && isValidId(userId)
+        && request.auth.uid != userId
+        && existing().role == 'operator'
+        && isStaffWithPerm(existing().branchId, 'manageStaff');
+    }
+
+    // SENDER LOGIN LOOKUP (Single-doc get only; NO list; NO PII stored inside)
+    match /senderLookup/{lookupKey} {
+      allow get: if lookupKey is string && lookupKey.size() >= 2 && lookupKey.size() <= 140 && lookupKey.matches('^[a-z0-9_-]+$');
+      allow list: if false;
+
+      allow create: if isSignedIn()
+        && lookupKey.matches('^[a-z0-9_-]+$')
+        && incoming().keys().hasAll(['senderId', 'ambiguous'])
+        && incoming().keys().hasOnly(['senderId', 'ambiguous'])
+        && isValidSenderId(incoming().senderId)
+        && incoming().ambiguous == false;
+
+      // If another sender registers the same name, mark ambiguous = true so login requires Sender ID
+      allow update: if isSignedIn()
+        && incoming().keys().hasAll(['senderId', 'ambiguous'])
+        && incoming().keys().hasOnly(['senderId', 'ambiguous'])
+        && incoming().senderId == existing().senderId
+        && incoming().ambiguous == true
+        && incoming().diff(existing()).affectedKeys().hasOnly(['ambiguous']);
+
+      allow delete: if false;
+    }
+
+    // UNIQUE SENDER ID CLAIMS
+    match /senderIds/{senderId} {
+      allow get: if isSignedIn() && isValidSenderId(senderId);
+      allow list: if false;
+      allow create: if isSignedIn()
+        && isValidSenderId(senderId)
+        && incoming().keys().hasAll(['uid', 'senderId', 'createdAt'])
+        && incoming().keys().hasOnly(['uid', 'senderId', 'createdAt'])
+        && incoming().uid == request.auth.uid
+        && incoming().senderId == senderId
+        && incoming().createdAt == request.time
+        && !exists(/databases/$(database)/documents/senderIds/$(senderId));
+      allow update, delete: if false;
+    }
+
+    // SEQUENTIAL SENDER ID COUNTER (Single non-PII integer)
+    match /counters/{counterId} {
+      allow get: if counterId == 'senderId';
+      allow list: if false;
+      allow create: if isSignedIn()
+        && counterId == 'senderId'
+        && incoming().keys().hasAll(['nextNumber'])
+        && incoming().keys().hasOnly(['nextNumber'])
+        && incoming().nextNumber is number
+        && incoming().nextNumber >= 1001 && incoming().nextNumber <= 999999;
+      allow update: if isSignedIn()
+        && counterId == 'senderId'
+        && incoming().keys().hasAll(['nextNumber'])
+        && incoming().keys().hasOnly(['nextNumber'])
+        && incoming().nextNumber is number
+        && incoming().nextNumber > existing().nextNumber
+        && incoming().nextNumber <= existing().nextNumber + 100;
+      allow delete: if false;
+    }
+
+    // SUBMISSIONS (BRANCH-ISOLATED, DAILY-CODE VERIFIED, FIELD-RESTRICTED)
+    match /submissions/{submissionId} {
+      allow get: if isSignedIn() && isValidId(submissionId) && (
+        resource.data.senderUid == request.auth.uid
+        || isActiveStaffOf(resource.data.branchId)
+      );
+
+      allow list: if isSignedIn() && (
+        resource.data.senderUid == request.auth.uid
+        || (isActiveStaff() && resource.data.branchId == staffBranch())
+      );
+
+      // Sender creates DRAFT submission ('Uploading') ONLY if dailyCode matches today's active branch code
+      allow create: if isSignedIn()
+        && isValidId(submissionId)
+        && isValidSubmission(incoming(), submissionId)
+        && isSender()
+        && incoming().senderUid == request.auth.uid
+        && incoming().status == 'Uploading'
+        && incoming().files.size() == 0
+        && incoming().createdAt == request.time
+        && incoming().billing.totalAmount == 0
+        && incoming().billing.amountPaid == 0
+        && (
+          (
+            exists(/databases/$(database)/documents/branches/$(incoming().branchId)/dailyCodes/$(todayUtc()))
+            && get(/databases/$(database)/documents/branches/$(incoming().branchId)/dailyCodes/$(todayUtc())).data.code == incoming().dailyCode
+          )
+          || (
+            exists(/databases/$(database)/documents/branches/$(incoming().branchId)/dailyCodes/$(incoming().date))
+            && get(/databases/$(database)/documents/branches/$(incoming().branchId)/dailyCodes/$(incoming().date)).data.code == incoming().dailyCode
+            && get(/databases/$(database)/documents/branches/$(incoming().branchId)/dailyCodes/$(incoming().date)).data.createdAt > request.time - duration.value(24, 'h')
+          )
+        );
+
+      allow update: if isSignedIn()
+        && isValidId(submissionId)
+        && isValidSubmission(incoming(), submissionId)
+        && incoming().id == existing().id
+        && incoming().branchId == existing().branchId
+        && incoming().senderUid == existing().senderUid
+        && incoming().senderId == existing().senderId
+        && incoming().dailyCode == existing().dailyCode
+        && incoming().createdAt == existing().createdAt
+        && (
+          // Action 1: Sender finalizes own 'Uploading' draft to 'Received' with uploaded files
+          (
+            existing().senderUid == request.auth.uid
+            && existing().status == 'Uploading'
+            && incoming().status == 'Received'
+            && incoming().files.size() >= 1
+            && incoming().billing.totalAmount == 0
+            && incoming().billing.amountPaid == 0
+            && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'customName', 'files', 'time', 'billing'])
+          )
+          ||
+          // Staff Actions 2–5 (single staff verification gate)
+          (
+            isActiveStaffOf(existing().branchId)
+            && existing().status != 'Uploading'
+            && (
+              // Action 2: Staff with updateStatus updates status/assignedTo
+              (
+                (meData().role == 'manager' || meData().permissions.updateStatus == true)
+                && incoming().status != 'Uploading'
+                && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'assignedTo'])
+              )
+              ||
+              // Action 3: Staff with recordBilling updates billing/assignedTo
+              (
+                (meData().role == 'manager' || meData().permissions.recordBilling == true)
+                && incoming().diff(existing()).affectedKeys().hasOnly(['billing', 'assignedTo'])
+              )
+              ||
+              // Action 4: Staff with BOTH updateStatus and recordBilling saves modal together
+              (
+                (meData().role == 'manager' || (meData().permissions.updateStatus == true && meData().permissions.recordBilling == true))
+                && incoming().status != 'Uploading'
+                && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'assignedTo', 'billing'])
+              )
+              ||
+              // Action 5: Staff with deleteFiles removes a file from the submission
+              (
+                (meData().role == 'manager' || meData().permissions.deleteFiles == true)
+                && incoming().files.size() < existing().files.size()
+                && incoming().diff(existing()).affectedKeys().hasOnly(['files'])
+              )
+            )
+          )
+        );
+
+      allow delete: if isSignedIn() && isValidId(submissionId) && (
+        (existing().senderUid == request.auth.uid && existing().status == 'Uploading')
+        || isStaffWithPerm(existing().branchId, 'deleteFiles')
+      );
+
+      // CHUNKED FILE STORAGE SUBCOLLECTION (Master-Gated to parent submission & branch)
+      match /fileChunks/{chunkId} {
+        allow get: if isSignedIn() && isValidId(submissionId) && isValidId(chunkId) && (
+          resource.data.senderUid == request.auth.uid
+          || isActiveStaffOf(resource.data.branchId)
+        );
+
+        allow list: if isSignedIn() && (
+          resource.data.senderUid == request.auth.uid
+          || (isActiveStaff() && resource.data.branchId == staffBranch())
+        );
+
+        allow create: if isSignedIn()
+          && isValidId(submissionId)
+          && isValidId(chunkId)
+          && isValidFileChunk(incoming(), submissionId)
+          && incoming().senderUid == request.auth.uid
+          && incoming().createdAt == request.time
+          && exists(/databases/$(database)/documents/submissions/$(submissionId))
+          && get(/databases/$(database)/documents/submissions/$(submissionId)).data.senderUid == request.auth.uid
+          && get(/databases/$(database)/documents/submissions/$(submissionId)).data.branchId == incoming().branchId
+          && get(/databases/$(database)/documents/submissions/$(submissionId)).data.status == 'Uploading';
+
+        allow update: if false;
+
+        allow delete: if isSignedIn() && isValidId(submissionId) && isValidId(chunkId) && (
+          (
+            existing().senderUid == request.auth.uid
+            && exists(/databases/$(database)/documents/submissions/$(submissionId))
+            && get(/databases/$(database)/documents/submissions/$(submissionId)).data.status == 'Uploading'
+          )
+          || isStaffWithPerm(existing().branchId, 'deleteFiles')
+        );
+      }
+    }
+
+    // EXPENSES (FINANCE PERMISSION REQUIRED)
+    match /expenses/{expenseId} {
+      allow get: if isSignedIn() && isValidId(expenseId) && isStaffWithPerm(resource.data.branchId, 'viewFinance');
+      allow list: if isSignedIn() && isActiveStaffPerm('viewFinance') && resource.data.branchId == staffBranch();
+
+      allow create: if isSignedIn()
+        && isValidId(expenseId)
+        && isValidExpense(incoming(), expenseId)
+        && incoming().createdAt == request.time
+        && isStaffWithPerm(incoming().branchId, 'viewFinance');
+
+      allow update: if isSignedIn()
+        && isValidId(expenseId)
+        && isValidExpense(incoming(), expenseId)
+        && incoming().id == existing().id
+        && incoming().branchId == existing().branchId
+        && incoming().createdAt == existing().createdAt
+        && isStaffWithPerm(existing().branchId, 'viewFinance')
+        && incoming().diff(existing()).affectedKeys().hasOnly(['category', 'description', 'amount', 'date']);
+
+      allow delete: if isSignedIn()
+        && isValidId(expenseId)
+        && isStaffWithPerm(existing().branchId, 'viewFinance');
+    }
+
+    // ACTIVITIES (IMMUTABLE AUDIT TRAIL)
+    match /activities/{activityId} {
+      allow get: if isSignedIn() && isValidId(activityId) && isActiveStaffOf(resource.data.branchId);
+      allow list: if isSignedIn() && isActiveStaff() && resource.data.branchId == staffBranch();
+
+      allow create: if isSignedIn()
+        && isValidId(activityId)
+        && isValidActivity(incoming(), activityId)
+        && incoming().createdAt == request.time
+        && (
+          isActiveStaffOf(incoming().branchId)
+          || (
+            isSender()
+            && getAfter(/databases/$(database)/documents/submissions/$(incoming().target)).data.senderUid == request.auth.uid
+            && getAfter(/databases/$(database)/documents/submissions/$(incoming().target)).data.branchId == incoming().branchId
+            && getAfter(/databases/$(database)/documents/submissions/$(incoming().target)).data.status == 'Received'
+          )
+          || (
+            !exists(/databases/$(database)/documents/branches/$(incoming().branchId))
+            && getAfter(/databases/$(database)/documents/branches/$(incoming().branchId)).data.ownerUid == request.auth.uid
+          )
+        );
+
+      allow update, delete: if false;
+    }
+
+    // NOTIFICATIONS (BRANCH-SCOPED REAL-TIME ALERTS)
+    match /notifications/{notifId} {
+      allow get: if isSignedIn() && isValidId(notifId) && isActiveStaffOf(resource.data.branchId);
+      allow list: if isSignedIn() && isActiveStaff() && resource.data.branchId == staffBranch();
+
+      allow create: if isSignedIn()
+        && isValidId(notifId)
+        && isValidNotification(incoming(), notifId)
+        && incoming().createdAt == request.time
+        && (
+          isActiveStaffOf(incoming().branchId)
+          || (
+            isSender()
+            && incoming().type == 'submission'
+            && incoming().read == false
+            && exists(/databases/$(database)/documents/branches/$(incoming().branchId))
+          )
+        );
+
+      allow update: if isSignedIn()
+        && isValidId(notifId)
+        && isValidNotification(incoming(), notifId)
+        && incoming().id == existing().id
+        && incoming().branchId == existing().branchId
+        && incoming().createdAt == existing().createdAt
+        && isActiveStaffOf(existing().branchId)
+        && incoming().diff(existing()).affectedKeys().hasOnly(['read']);
+
+      allow delete: if isSignedIn() && isValidId(notifId) && isBranchManager(existing().branchId);
+    }
+  }
+}

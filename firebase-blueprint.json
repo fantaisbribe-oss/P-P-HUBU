@@ -1,0 +1,593 @@
+{
+  "entities": {
+    "BranchPublic": {
+      "title": "BranchPublic",
+      "description": "Public directory entry for a registered printing press branch so senders can locate and connect to it.",
+      "type": "object",
+      "properties": {
+        "branchId": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 40,
+          "pattern": "^[A-Z0-9\\-]+$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 120
+        },
+        "area": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "city": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "phone": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "ownerUid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "quotaFull": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["branchId", "name", "area", "city", "phone", "ownerUid", "quotaFull", "createdAt"]
+    },
+    "BranchPrivate": {
+      "title": "BranchPrivate",
+      "description": "Private operational and quota settings for an isolated printing press branch.",
+      "type": "object",
+      "properties": {
+        "branchId": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 40,
+          "pattern": "^[A-Z0-9\\-]+$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 120
+        },
+        "area": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "city": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "phone": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "storageQuotaMB": {
+          "type": "number"
+        },
+        "retentionDays": {
+          "type": "number"
+        },
+        "storageUsedBytes": {
+          "type": "number"
+        },
+        "ownerUid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "branchId",
+        "name",
+        "area",
+        "city",
+        "phone",
+        "storageQuotaMB",
+        "retentionDays",
+        "storageUsedBytes",
+        "ownerUid",
+        "createdAt"
+      ]
+    },
+    "DailyCode": {
+      "title": "DailyCode",
+      "description": "Branch-scoped daily submission code for a single UTC/Ghana calendar date (YYYY-MM-DD).",
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 20,
+          "pattern": "^[A-Z0-9\\-]+$"
+        },
+        "date": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "branchId": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 40,
+          "pattern": "^[A-Z0-9\\-]+$"
+        },
+        "createdBy": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["code", "date", "branchId", "createdBy", "createdAt"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated user profile for a branch manager, printing operator, or customer sender. Never stores passwords or PINs.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "role": {
+          "type": "string",
+          "enum": ["manager", "operator", "sender"]
+        },
+        "branchId": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "fullName": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "username": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "permissions": {
+          "type": "object",
+          "description": "Seven granular boolean staff permissions: viewFiles, updateStatus, recordBilling, viewFinance, deleteFiles, manageCodes, manageStaff."
+        },
+        "senderId": {
+          "type": "string",
+          "maxLength": 32,
+          "pattern": "^SND-[0-9]{4,8}$"
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "phone": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "role", "createdAt"]
+    },
+    "SenderLookup": {
+      "title": "SenderLookup",
+      "description": "Minimal non-PII lookup document mapping a normalized sender name or phone hash key to a Sender ID for sign-in.",
+      "type": "object",
+      "properties": {
+        "senderId": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 32,
+          "pattern": "^SND-[0-9]{4,8}$"
+        },
+        "ambiguous": {
+          "type": "boolean"
+        }
+      },
+      "required": ["senderId", "ambiguous"]
+    },
+    "SenderIdClaim": {
+      "title": "SenderIdClaim",
+      "description": "Uniqueness registry preventing duplicate human-readable Sender IDs.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "senderId": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 32,
+          "pattern": "^SND-[0-9]{4,8}$"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "senderId", "createdAt"]
+    },
+    "Counter": {
+      "title": "Counter",
+      "description": "Atomic sequential counter for human-readable Sender IDs.",
+      "type": "object",
+      "properties": {
+        "nextNumber": {
+          "type": "number"
+        }
+      },
+      "required": ["nextNumber"]
+    },
+    "Submission": {
+      "title": "Submission",
+      "description": "A customer print submission package scoped to a single branch with files, status workflow, and GH₵ billing.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 64
+        },
+        "branchId": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 40,
+          "pattern": "^[A-Z0-9\\-]+$"
+        },
+        "senderUid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "senderId": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 32
+        },
+        "senderName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "customName": {
+          "type": "string",
+          "maxLength": 180
+        },
+        "dailyCode": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 20
+        },
+        "year": {
+          "type": "number"
+        },
+        "month": {
+          "type": "number"
+        },
+        "day": {
+          "type": "number"
+        },
+        "date": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "time": {
+          "type": "string",
+          "maxLength": 24
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "Uploading",
+            "Received",
+            "Processing",
+            "Ready for Printing",
+            "Printing",
+            "Printed",
+            "Ready for Collection",
+            "Collected"
+          ]
+        },
+        "assignedTo": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "billing": {
+          "type": "object",
+          "description": "Print specifications and GH₵ billing details."
+        },
+        "files": {
+          "type": "array",
+          "description": "Bounded list (max 25) of uploaded file metadata referencing Cloud Storage paths."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "branchId",
+        "senderUid",
+        "senderId",
+        "senderName",
+        "customName",
+        "dailyCode",
+        "year",
+        "month",
+        "day",
+        "date",
+        "time",
+        "status",
+        "assignedTo",
+        "billing",
+        "files",
+        "createdAt"
+      ]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "Operational expense entry in GH₵ for a single branch.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 64
+        },
+        "branchId": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 40,
+          "pattern": "^[A-Z0-9\\-]+$"
+        },
+        "date": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "amount": {
+          "type": "number"
+        },
+        "recordedBy": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "branchId", "date", "category", "description", "amount", "recordedBy", "createdAt"]
+    },
+    "Activity": {
+      "title": "Activity",
+      "description": "Immutable branch-scoped audit trail record.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 64
+        },
+        "branchId": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 40,
+          "pattern": "^[A-Z0-9\\-]+$"
+        },
+        "user": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 140
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 320
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "date": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "time": {
+          "type": "string",
+          "maxLength": 24
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "branchId", "user", "action", "target", "date", "time", "createdAt"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "Real-time branch notification for submissions, payments, codes, and job milestones.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 64
+        },
+        "branchId": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 40,
+          "pattern": "^[A-Z0-9\\-]+$"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["submission", "payment", "code", "job", "system"]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 140
+        },
+        "msg": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 400
+        },
+        "read": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "branchId", "type", "title", "msg", "read", "createdAt"]
+    },
+    "FileChunk": {
+      "title": "FileChunk",
+      "description": "Base64-encoded binary chunk belonging to a customer submission file when stored in Firestore Chunked Vault.",
+      "type": "object",
+      "properties": {
+        "submissionId": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 64
+        },
+        "branchId": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 40,
+          "pattern": "^[A-Z0-9-]+$"
+        },
+        "senderUid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "fileId": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 64
+        },
+        "chunkIndex": {
+          "type": "number"
+        },
+        "totalChunks": {
+          "type": "number"
+        },
+        "mimeType": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 140
+        },
+        "data": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 750000
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["submissionId", "branchId", "senderUid", "fileId", "chunkIndex", "totalChunks", "mimeType", "data", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/branchPublic/{branchId}": {
+      "schema": { "$ref": "#/entities/BranchPublic" },
+      "description": "Public directory of printing press branches readable by signed-in users."
+    },
+    "/branches/{branchId}": {
+      "schema": { "$ref": "#/entities/BranchPrivate" },
+      "description": "Private branch configuration, storage quota, and retention policy."
+    },
+    "/branches/{branchId}/dailyCodes/{dateKey}": {
+      "schema": { "$ref": "#/entities/DailyCode" },
+      "description": "Daily submission codes keyed by YYYY-MM-DD (UTC/Ghana time)."
+    },
+    "/users/{uid}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User profiles for managers, operators, and senders (no secrets stored)."
+    },
+    "/senderLookup/{lookupKey}": {
+      "schema": { "$ref": "#/entities/SenderLookup" },
+      "description": "Single-doc lookup mapping normalized sender name or phone key to a Sender ID."
+    },
+    "/senderIds/{senderId}": {
+      "schema": { "$ref": "#/entities/SenderIdClaim" },
+      "description": "Uniqueness lock documents for human-readable Sender IDs."
+    },
+    "/counters/{counterId}": {
+      "schema": { "$ref": "#/entities/Counter" },
+      "description": "Sequential counter documents (e.g. counters/senderId)."
+    },
+    "/submissions/{submissionId}": {
+      "schema": { "$ref": "#/entities/Submission" },
+      "description": "Customer print submissions with branchId isolation, status workflow, and billing."
+    },
+    "/submissions/{submissionId}/fileChunks/{chunkId}": {
+      "schema": { "$ref": "#/entities/FileChunk" },
+      "description": "Ordered binary file chunks for submissions stored in Firestore."
+    },
+    "/expenses/{expenseId}": {
+      "schema": { "$ref": "#/entities/Expense" },
+      "description": "Branch operational expenses in GH₵ restricted to staff with viewFinance."
+    },
+    "/activities/{activityId}": {
+      "schema": { "$ref": "#/entities/Activity" },
+      "description": "Immutable branch activity audit log."
+    },
+    "/notifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/Notification" },
+      "description": "Branch-scoped real-time notifications."
+    }
+  }
+}

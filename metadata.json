@@ -1,0 +1,6 @@
+{
+  "name": "P&P-HUB",
+  "description": "Enterprise Printing Press Management, Daily Submission Codes, Visual File Organization, and GH₵ Financial Operations powered by Firebase.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

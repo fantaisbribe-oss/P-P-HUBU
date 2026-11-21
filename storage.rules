@@ -1,0 +1,72 @@
+rules_version = '2';
+
+// P&P-HUB Cloud Storage Security Rules
+// Path structure: branches/{branchId}/{yyyy}/{mm}/{dd}/{submissionId}/{fileName}
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Default deny everything
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc() {
+      return firestore.get(/databases/ai-studio-8aebd59a-e7da-434d-aa48-ea4f64055fa8/documents/users/$(request.auth.uid));
+    }
+
+    function isActiveStaffOf(branchId) {
+      return isSignedIn()
+        && userDoc().data.role in ['manager', 'operator']
+        && userDoc().data.active == true
+        && userDoc().data.branchId == branchId;
+    }
+
+    function hasPerm(perm) {
+      return userDoc().data.role == 'manager'
+        || userDoc().data.permissions[perm] == true;
+    }
+
+    function isAllowedContentType() {
+      return request.resource.contentType != null && (
+        request.resource.contentType.matches('image/.*') ||
+        request.resource.contentType == 'application/pdf' ||
+        request.resource.contentType == 'application/msword' ||
+        request.resource.contentType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+        request.resource.contentType == 'application/vnd.ms-excel' ||
+        request.resource.contentType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+        request.resource.contentType == 'application/vnd.ms-powerpoint' ||
+        request.resource.contentType == 'application/vnd.openxmlformats-officedocument.presentationml.presentation' ||
+        request.resource.contentType == 'application/zip' ||
+        request.resource.contentType == 'application/x-zip-compressed'
+      );
+    }
+
+    match /branches/{branchId}/{yyyy}/{mm}/{dd}/{submissionId}/{fileName} {
+      // Read: owning sender OR active staff of this branch with viewFiles
+      allow read: if isSignedIn() && (
+        firestore.get(/databases/ai-studio-8aebd59a-e7da-434d-aa48-ea4f64055fa8/documents/submissions/$(submissionId)).data.senderUid == request.auth.uid
+        || (isActiveStaffOf(branchId) && hasPerm('viewFiles'))
+      );
+
+      // Create/Write: owning sender ONLY while submission draft is 'Uploading', <= 50 MB, allowed MIME type
+      allow create, update: if isSignedIn()
+        && request.resource.size <= 50 * 1024 * 1024
+        && isAllowedContentType()
+        && firestore.get(/databases/ai-studio-8aebd59a-e7da-434d-aa48-ea4f64055fa8/documents/submissions/$(submissionId)).data.senderUid == request.auth.uid
+        && firestore.get(/databases/ai-studio-8aebd59a-e7da-434d-aa48-ea4f64055fa8/documents/submissions/$(submissionId)).data.branchId == branchId
+        && firestore.get(/databases/ai-studio-8aebd59a-e7da-434d-aa48-ea4f64055fa8/documents/submissions/$(submissionId)).data.status == 'Uploading';
+
+      // Delete: active staff of this branch with deleteFiles OR owning sender while still 'Uploading'
+      allow delete: if isSignedIn() && (
+        (isActiveStaffOf(branchId) && hasPerm('deleteFiles'))
+        || (
+          firestore.get(/databases/ai-studio-8aebd59a-e7da-434d-aa48-ea4f64055fa8/documents/submissions/$(submissionId)).data.senderUid == request.auth.uid
+          && firestore.get(/databases/ai-studio-8aebd59a-e7da-434d-aa48-ea4f64055fa8/documents/submissions/$(submissionId)).data.status == 'Uploading'
+        )
+      );
+    }
+  }
+}

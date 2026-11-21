@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --color-navy-950: #030712;
+  --color-navy-900: #050b14;
+  --color-navy-800: #0f172a;
+  --color-navy-700: #1e293b;
+  --color-royal-600: #2563eb;
+  --color-royal-700: #1d4ed8;
+  --color-royal-800: #1e40af;
+  --color-cyanAccent: #38bdf8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: #f8fafc;
+  color: #0f172a;
+  overflow-x: hidden;
+}
+
+.hero-gradient {
+  background: radial-gradient(circle at top left, #1e3a8a 0%, #050b14 55%, #030712 100%);
+}
+
+.luxury-shadow {
+  box-shadow: 0 20px 40px -15px rgba(3, 7, 18, 0.08);
+}
+
+.luxury-glow {
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.22);
+}
+
+.month-card-overlay {
+  background: linear-gradient(180deg, rgba(3, 7, 18, 0.12) 0%, rgba(3, 7, 18, 0.68) 55%, rgba(3, 7, 18, 0.95) 100%);
+}
+
+.whatsapp-wallpaper {
+  background-color: #efeae2;
+  background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.35);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.55);
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeSlideIn 0.25s ease-out forwards;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0.65;
+  }
+}
+
+.pulse-indicator {
+  animation: pulseDot 1.8s infinite ease-in-out;
+}

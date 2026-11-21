@@ -1,0 +1,3403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P&P-HUB | Enterprise Printing Press Management & File Organization</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            navy: {
+              950: '#030712',
+              900: '#050b14',
+              800: '#0f172a',
+              700: '#1e293b',
+            },
+            royal: {
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+            },
+            cyanAccent: '#38bdf8'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+      overflow-x: hidden;
+    }
+    .hero-gradient {
+      background: radial-gradient(circle at top left, #1e3a8a 0%, #050b14 55%, #030712 100%);
+    }
+    .luxury-shadow {
+      box-shadow: 0 20px 40px -15px rgba(3, 7, 18, 0.08);
+    }
+    .luxury-glow {
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.22);
+    }
+    .month-card-overlay {
+      background: linear-gradient(180deg, rgba(3,7,18,0.12) 0%, rgba(3,7,18,0.68) 55%, rgba(3,7,18,0.95) 100%);
+    }
+    .whatsapp-wallpaper {
+      background-color: #efeae2;
+      background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+      background-size: 18px 18px;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.35); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.55); }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in { animation: fadeSlideIn 0.25s ease-out forwards; }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.65; }
+    }
+    .pulse-indicator { animation: pulseDot 1.8s infinite ease-in-out; }
+  </style>
+</head>
+<body class="antialiased selection:bg-blue-600 selection:text-white">
+
+  <!-- TOAST NOTIFICATION BANNER -->
+  <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+  <!-- ===================================================================== -->
+  <!-- 1. CHARIS-STYLE TWO-PANEL AUTHENTICATION PORTAL                       -->
+  <!-- ===================================================================== -->
+  <div id="auth-portal" class="min-h-screen w-full flex flex-col lg:flex-row">
+    <!-- LEFT PANEL: DEEP NAVY CHARIS BRANDING & ROLE SELECTOR -->
+    <div class="lg:w-[50%] hero-gradient text-white p-6 sm:p-10 lg:p-14 flex flex-col justify-between relative overflow-hidden border-b lg:border-b-0 lg:border-r border-white/10">
+      <!-- Subtle decorative glow -->
+      <div class="absolute -top-24 -left-24 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute bottom-10 right-10 w-72 h-72 bg-cyan-400/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- Brand Logo -->
+      <div class="flex items-center justify-between relative z-10">
+        <div class="flex items-center gap-3.5">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center font-extrabold text-xl text-white luxury-glow">
+            <i class="fa-solid fa-print"></i>
+          </div>
+          <div>
+            <span class="text-xl font-extrabold tracking-wide block leading-none">P&P-HUB</span>
+            <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-400">Print & Press Cloud</span>
+          </div>
+        </div>
+        <span class="text-xs font-mono bg-white/10 border border-white/15 px-3 py-1 rounded-full text-cyan-300">
+          19 NOV 2026
+        </span>
+      </div>
+
+      <!-- Headline & 3 Selectable Account Cards -->
+      <div class="my-8 lg:my-0 relative z-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-400/25 text-cyan-300 text-xs font-bold mb-4">
+          <i class="fa-solid fa-shield-halved"></i> Zero-Leakage Branch Isolation & Daily Code Security
+        </div>
+        <h1 class="text-3xl sm:text-4xl lg:text-[42px] font-extrabold leading-[1.15] tracking-tight mb-4">
+          Precision File Organization & Press Operations.
+        </h1>
+        <p class="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl mb-8">
+          Select your workspace role below to authenticate into your dedicated printing press branch or submit print-ready documents using a branch's Daily Submission Code.
+        </p>
+
+        <!-- 3 Selectable Role Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 max-w-2xl">
+          <button type="button" onclick="selectAuthRole('manager')" id="role-card-manager"
+            class="role-select-card text-left p-4 rounded-2xl border transition-all duration-200 bg-cyan-400/15 border-cyan-400 luxury-glow">
+            <div class="w-9 h-9 rounded-xl bg-blue-600/40 border border-cyan-400/40 flex items-center justify-center text-cyan-300 mb-3">
+              <i class="fa-solid fa-crown"></i>
+            </div>
+            <h3 class="font-bold text-sm text-white">Branch Manager</h3>
+            <p class="text-[11px] text-slate-300 mt-1 leading-snug">Own branch, staff roles, daily codes & GH₵ reports</p>
+          </button>
+
+          <button type="button" onclick="selectAuthRole('operator')" id="role-card-operator"
+            class="role-select-card text-left p-4 rounded-2xl border transition-all duration-200 bg-white/[0.04] border-white/10 hover:border-cyan-400/60 hover:bg-white/[0.08]">
+            <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-cyan-300 mb-3">
+              <i class="fa-solid fa-gears"></i>
+            </div>
+            <h3 class="font-bold text-sm text-white">Printing Operator</h3>
+            <p class="text-[11px] text-slate-400 mt-1 leading-snug">Print queue, job statuses, copies & billing</p>
+          </button>
+
+          <button type="button" onclick="selectAuthRole('sender')" id="role-card-sender"
+            class="role-select-card text-left p-4 rounded-2xl border transition-all duration-200 bg-white/[0.04] border-white/10 hover:border-cyan-400/60 hover:bg-white/[0.08]">
+            <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-cyan-300 mb-3">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
+            <h3 class="font-bold text-sm text-white">Sender / Customer</h3>
+            <p class="text-[11px] text-slate-400 mt-1 leading-snug">Find press, enter daily code & upload files</p>
+          </button>
+        </div>
+
+        <!-- Quick Demo Switcher Strip -->
+        <div class="mt-7 p-4 rounded-2xl bg-white/[0.04] border border-white/10 max-w-2xl">
+          <div class="flex items-center justify-between mb-2.5">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-cyan-400"><i class="fa-solid fa-bolt mr-1"></i> Instant 1-Click Demo Logins (Pre-Loaded Data)</span>
+            <span class="text-[10px] text-slate-400">Accra & Kumasi Branches</span>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" onclick="quickDemoLogin('manager', 'FANTA-ACC')" class="text-xs bg-blue-600 hover:bg-blue-500 text-white font-semibold px-3 py-1.5 rounded-lg transition">
+              Manager (Fanta Press)
+            </button>
+            <button type="button" onclick="quickDemoLogin('operator', 'FANTA-ACC')" class="text-xs bg-white/10 hover:bg-white/20 text-white font-semibold px-3 py-1.5 rounded-lg transition">
+              Operator (Ama)
+            </button>
+            <button type="button" onclick="quickDemoLogin('sender', 'SND-1001')" class="text-xs bg-white/10 hover:bg-white/20 text-white font-semibold px-3 py-1.5 rounded-lg transition">
+              Sender (Kofi Mensah)
+            </button>
+            <button type="button" onclick="quickDemoLogin('manager', 'ROYAL-KUM')" class="text-xs bg-emerald-600/80 hover:bg-emerald-500 text-white font-semibold px-3 py-1.5 rounded-lg transition" title="Verify complete branch isolation">
+              Branch 2 (Royal Kumasi)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="flex items-center justify-between text-[11px] font-bold tracking-widest uppercase text-slate-400 relative z-10">
+        <span>P&P-HUB • ENTERPRISE ARCHITECTURE</span>
+        <span class="text-cyan-400/80">SHA-256 / PIN RATE-GUARDED</span>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: WHITE AUTHENTICATION FORMS -->
+    <div class="lg:w-[50%] bg-white p-6 sm:p-10 lg:p-14 flex flex-col justify-center overflow-y-auto">
+      <div class="max-w-md w-full mx-auto">
+
+        <!-- ================= MANAGER AUTH PANEL ================= -->
+        <div id="auth-form-manager" class="auth-role-panel animate-fade-in">
+          <div class="flex items-center gap-2 mb-6 bg-slate-100 p-1 rounded-xl">
+            <button type="button" onclick="toggleAuthSubTab('manager', 'login')" id="tab-manager-login"
+              class="flex-1 py-2 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-sm transition">Manager Sign In</button>
+            <button type="button" onclick="toggleAuthSubTab('manager', 'register')" id="tab-manager-register"
+              class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition">Register New Branch</button>
+          </div>
+
+          <!-- Manager Login Form -->
+          <div id="panel-manager-login">
+            <span class="text-[11px] font-extrabold tracking-widest uppercase text-blue-600">BRANCH OWNER ACCESS</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Branch Manager Login</h2>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1 mb-6">Enter your unique Branch Code and private credentials to manage operations.</p>
+
+            <form onsubmit="handleManagerLogin(event)" class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Unique Branch Code</label>
+                <input type="text" id="mgr-login-branch" value="FANTA-ACC" required
+                  class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm font-mono uppercase focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 outline-none transition" placeholder="e.g. FANTA-ACC" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Manager Username or Name</label>
+                <input type="text" id="mgr-login-user" value="kwame.manager" required
+                  class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 outline-none transition" placeholder="kwame.manager" />
+              </div>
+              <div>
+                <div class="flex justify-between items-center mb-1.5">
+                  <label class="block text-xs font-bold text-slate-700">Private Password</label>
+                  <button type="button" onclick="showToast('Password recovery link dispatched to registered branch recovery contact.', 'info')" class="text-[11px] font-bold text-blue-600 hover:underline">Forgot Password?</button>
+                </div>
+                <input type="password" id="mgr-login-pass" value="password" required
+                  class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 outline-none transition" placeholder="••••••••" />
+              </div>
+              <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-bold text-sm shadow-lg shadow-blue-600/25 transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-lock"></i> Access Branch Workspace
+              </button>
+            </form>
+          </div>
+
+          <!-- Manager Registration Form -->
+          <div id="panel-manager-register" class="hidden">
+            <span class="text-[11px] font-extrabold tracking-widest uppercase text-blue-600">CREATE PRINTING PRESS WORKSPACE</span>
+            <h2 class="text-2xl font-extrabold text-slate-900 mt-1">Register Printing Press</h2>
+            <p class="text-xs text-slate-500 mt-1 mb-5">Automatically generates a unique Branch Code & isolated cloud workspace.</p>
+
+            <form onsubmit="handleManagerRegister(event)" class="space-y-3.5">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Printing Press Name</label>
+                <input type="text" id="reg-press-name" required placeholder="e.g. Apex Digital Printing Press"
+                  class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:border-blue-600 outline-none" />
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Branch Location / Area</label>
+                  <input type="text" id="reg-press-area" required placeholder="e.g. Osu Oxford St"
+                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:border-blue-600 outline-none" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">City</label>
+                  <input type="text" id="reg-press-city" required placeholder="e.g. Accra"
+                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:border-blue-600 outline-none" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Manager's Full Name</label>
+                <input type="text" id="reg-mgr-name" required placeholder="e.g. Nana Yaw Boateng"
+                  class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:border-blue-600 outline-none" />
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Username / ID</label>
+                  <input type="text" id="reg-mgr-user" required placeholder="nana.manager"
+                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:border-blue-600 outline-none" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Secure Password</label>
+                  <input type="password" id="reg-mgr-pass" required placeholder="••••••••"
+                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:border-blue-600 outline-none" />
+                </div>
+              </div>
+              <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-sm shadow-lg shadow-blue-600/25 transition">
+                Create Branch & Generate Branch Code
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- ================= OPERATOR AUTH PANEL ================= -->
+        <div id="auth-form-operator" class="auth-role-panel hidden animate-fade-in">
+          <span class="text-[11px] font-extrabold tracking-widest uppercase text-blue-600">AUTHORIZED STAFF PORTAL</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Printing Operator Login</h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1 mb-6">Sign in using the Branch Code and staff credentials assigned by your Branch Manager.</p>
+
+          <form onsubmit="handleOperatorLogin(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">Assigned Branch Code</label>
+              <input type="text" id="op-login-branch" value="FANTA-ACC" required
+                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm font-mono uppercase focus:bg-white focus:border-blue-600 outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">Staff Username / Account ID</label>
+              <input type="text" id="op-login-user" value="ama.operator" required
+                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:border-blue-600 outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">Private Password</label>
+              <input type="password" id="op-login-pass" value="password" required
+                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:border-blue-600 outline-none" />
+            </div>
+            <div class="p-3.5 rounded-xl bg-blue-50 border border-blue-100 text-xs text-blue-800 flex items-start gap-2.5">
+              <i class="fa-solid fa-circle-info mt-0.5 text-blue-600"></i>
+              <span>Staff accounts are provisioned exclusively by the Branch Manager with custom role permissions.</span>
+            </div>
+            <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-sm shadow-lg shadow-blue-600/25 transition">
+              Sign In to Operator Console
+            </button>
+          </form>
+        </div>
+
+        <!-- ================= SENDER / CUSTOMER AUTH PANEL ================= -->
+        <div id="auth-form-sender" class="auth-role-panel hidden animate-fade-in">
+          <div class="flex items-center gap-2 mb-6 bg-slate-100 p-1 rounded-xl">
+            <button type="button" onclick="toggleAuthSubTab('sender', 'login')" id="tab-sender-login"
+              class="flex-1 py-2 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-sm transition">Sender Sign In</button>
+            <button type="button" onclick="toggleAuthSubTab('sender', 'register')" id="tab-sender-register"
+              class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition">New Sender Account</button>
+          </div>
+
+          <!-- Sender Login -->
+          <div id="panel-sender-login">
+            <span class="text-[11px] font-extrabold tracking-widest uppercase text-blue-600">CUSTOMER SUBMISSION PORTAL</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Sender Sign In</h2>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1 mb-6">Log in with your Sender ID or Name and your 4-digit security PIN.</p>
+
+            <div id="sender-pin-warning" class="hidden mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-xs font-bold text-red-700 flex items-center gap-2">
+              <i class="fa-solid fa-shield-virus"></i>
+              <span id="sender-pin-warning-text">Invalid PIN.</span>
+            </div>
+
+            <form onsubmit="handleSenderLogin(event)" class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Sender ID or Registered Name</label>
+                <input type="text" id="snd-login-id" value="SND-1001" required placeholder="e.g. SND-1001 or Kofi Mensah"
+                  class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:border-blue-600 outline-none" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">4-Digit Security PIN</label>
+                <input type="password" id="snd-login-pin" value="1234" maxlength="4" pattern="\d{4}" inputmode="numeric" required placeholder="••••"
+                  class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-center text-xl font-mono tracking-[0.6em] focus:bg-white focus:border-blue-600 outline-none" />
+              </div>
+              <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-sm shadow-lg shadow-blue-600/25 transition">
+                Continue to File Submission
+              </button>
+            </form>
+          </div>
+
+          <!-- Sender Registration -->
+          <div id="panel-sender-register" class="hidden">
+            <span class="text-[11px] font-extrabold tracking-widest uppercase text-blue-600">QUICK CUSTOMER REGISTRATION</span>
+            <h2 class="text-2xl font-extrabold text-slate-900 mt-1">Create Sender Account</h2>
+            <p class="text-xs text-slate-500 mt-1 mb-5">Enter your name and choose a 4-digit PIN. We will generate your unique Sender ID.</p>
+
+            <form onsubmit="handleSenderRegister(event)" class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Your Name / Business Name</label>
+                <input type="text" id="reg-snd-name" required placeholder="e.g. Efua Sutherland"
+                  class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:border-blue-600 outline-none" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Create 4-Digit PIN</label>
+                <input type="password" id="reg-snd-pin" maxlength="4" pattern="\d{4}" inputmode="numeric" required placeholder="••••"
+                  class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-center text-xl font-mono tracking-[0.6em] focus:bg-white focus:border-blue-600 outline-none" />
+              </div>
+              <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold text-sm shadow-lg shadow-blue-600/25 transition">
+                Generate Sender ID & Enter
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 2. MAIN APPLICATION WORKSPACE (MANAGER, OPERATOR, SENDER)             -->
+  <!-- ===================================================================== -->
+  <div id="app-workspace" class="hidden min-h-screen flex bg-slate-50">
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="mobile-sidebar-backdrop" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-navy-950/70 backdrop-blur-sm z-30 hidden lg:hidden"></div>
+
+    <!-- DARK NAVY CHARIS SIDEBAR -->
+    <aside id="app-sidebar" class="fixed lg:static inset-y-0 left-0 w-72 bg-navy-900 text-white flex flex-col z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 border-r border-white/10 shrink-0">
+      <!-- Sidebar Brand Header -->
+      <div class="p-5 border-b border-white/10 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-400 flex items-center justify-center font-extrabold text-lg text-white shadow-lg shadow-blue-600/30">
+            <i class="fa-solid fa-print"></i>
+          </div>
+          <div>
+            <h1 class="font-extrabold text-base tracking-wide leading-tight">P&P-HUB</h1>
+            <p class="text-[10px] font-bold uppercase tracking-widest text-cyan-400" id="sidebar-branch-tag">FANTA-ACC</p>
+          </div>
+        </div>
+        <button onclick="toggleMobileSidebar(false)" class="lg:hidden text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- User Profile Card -->
+      <div class="m-4 p-3.5 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center gap-3">
+        <div id="sidebar-avatar" class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center font-extrabold text-sm text-white shrink-0">
+          KM
+        </div>
+        <div class="min-w-0 flex-1">
+          <p id="sidebar-user-name" class="text-sm font-bold text-white truncate">Kwame Boateng</p>
+          <p id="sidebar-user-role" class="text-[11px] text-cyan-300 font-semibold truncate">Branch Manager</p>
+        </div>
+      </div>
+
+      <!-- Navigation Links Container -->
+      <nav id="sidebar-nav" class="flex-1 px-3 py-2 space-y-1 overflow-y-auto"></nav>
+
+      <!-- Session Security Footer -->
+      <div class="p-4 border-t border-white/10 text-[11px] text-slate-400 flex items-center justify-between">
+        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Cloud Synced</span>
+        <button onclick="logoutUser()" class="text-red-400 hover:text-red-300 font-bold flex items-center gap-1">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <!-- Top Workspace Header -->
+      <header class="bg-white border-b border-slate-200 px-4 sm:px-8 py-4 flex items-center justify-between gap-4 sticky top-0 z-20">
+        <div class="flex items-center gap-3 min-w-0">
+          <button onclick="toggleMobileSidebar(true)" class="lg:hidden w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="min-w-0">
+            <h2 id="topbar-title" class="text-lg sm:text-xl font-extrabold text-slate-900 truncate">Dashboard Overview</h2>
+            <p id="topbar-subtitle" class="text-xs text-slate-500 truncate">Fanta Digital Printing • Osu, Accra</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2.5 sm:gap-3 shrink-0">
+          <!-- Active Daily Code Quick Pill (Visible for Manager & Operator) -->
+          <div id="topbar-daily-code-pill" class="hidden sm:flex items-center gap-2.5 bg-blue-50 border border-blue-200 px-3.5 py-2 rounded-xl">
+            <div>
+              <span class="block text-[9px] font-extrabold uppercase tracking-wider text-blue-600">Today's Submission Code</span>
+              <span id="topbar-daily-code-val" class="font-mono font-extrabold text-sm text-slate-900">PPH-8492</span>
+            </div>
+            <button onclick="copyDailyCode()" title="Copy Daily Code" class="w-8 h-8 rounded-lg bg-white border border-blue-200 text-blue-600 hover:bg-blue-600 hover:text-white transition flex items-center justify-center">
+              <i class="fa-regular fa-copy text-xs"></i>
+            </button>
+            <button onclick="openQrModal()" title="Display QR Code" class="w-8 h-8 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition flex items-center justify-center">
+              <i class="fa-solid fa-qrcode text-xs"></i>
+            </button>
+          </div>
+
+          <!-- Notifications Bell -->
+          <button onclick="navigateTo('notifications')" class="relative w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-slate-700 transition">
+            <i class="fa-regular fa-bell"></i>
+            <span id="notif-badge" class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-600 text-white text-[10px] font-extrabold flex items-center justify-center">3</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- DYNAMIC WORKSPACE VIEW CONTAINER -->
+      <main id="workspace-main" class="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1600px] w-full mx-auto">
+        <!-- Rendered dynamically by JS based on active route & role -->
+      </main>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 3. MODALS: SUBMISSION DETAILS, PREVIEW LIGHTBOX, QR CODE, STAFF FORM  -->
+  <!-- ===================================================================== -->
+
+  <!-- A. SUBMISSION DETAILS & PRINTING OPERATIONS MODAL (LEVEL 4) -->
+  <div id="submission-detail-modal" class="fixed inset-0 bg-navy-950/75 backdrop-blur-sm z-50 hidden items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-5xl w-full overflow-hidden shadow-2xl border border-slate-200 my-auto animate-fade-in">
+      <!-- Modal Header -->
+      <div class="bg-navy-900 text-white px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-600/30 border border-cyan-400/30 flex items-center justify-center text-cyan-400">
+            <i class="fa-solid fa-file-invoice"></i>
+          </div>
+          <div>
+            <h3 id="modal-sub-custom-name" class="font-extrabold text-base sm:text-lg">Submission Details</h3>
+            <p id="modal-sub-meta" class="text-xs text-cyan-300 font-mono">SUB-2026-1119-01 • Daily Code: PPH-8492</p>
+          </div>
+        </div>
+        <button onclick="closeSubmissionModal()" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 max-h-[82vh] overflow-y-auto space-y-6" id="modal-sub-body">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- B. WHATSAPP-STYLE FULL LIGHTBOX FILE PREVIEW MODAL -->
+  <div id="file-lightbox-modal" class="fixed inset-0 bg-navy-950/90 backdrop-blur-md z-[60] hidden flex-col">
+    <div class="px-6 py-4 bg-navy-900/90 border-b border-white/10 text-white flex items-center justify-between">
+      <div class="flex items-center gap-3 min-w-0">
+        <i id="lightbox-icon" class="fa-solid fa-image text-cyan-400 text-lg"></i>
+        <div class="min-w-0">
+          <h4 id="lightbox-filename" class="font-bold text-sm sm:text-base truncate">Wedding_Invitation_Gold.png</h4>
+          <p id="lightbox-subtext" class="text-xs text-slate-400 truncate">Sender: Kofi Mensah • 19 Nov 2026, 09:42 AM • 2.4 MB</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2.5">
+        <button onclick="triggerSimulatedDownload()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">Download</span>
+        </button>
+        <button onclick="triggerSimulatedPrint()" class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-xs font-bold flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-print"></i> <span class="hidden sm:inline">Print Now</span>
+        </button>
+        <button onclick="closeLightbox()" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-red-500/80 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+    <div id="lightbox-canvas" class="flex-1 flex items-center justify-center p-4 sm:p-8 overflow-auto">
+      <!-- High-res visual or simulated document sheet rendered here -->
+    </div>
+  </div>
+
+  <!-- C. DAILY CODE QR MODAL -->
+  <div id="qr-code-modal" class="fixed inset-0 bg-navy-950/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-7 text-center shadow-2xl animate-fade-in">
+      <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto text-xl mb-3">
+        <i class="fa-solid fa-qrcode"></i>
+      </div>
+      <h3 class="text-xl font-extrabold text-slate-900">Branch Daily Submission QR</h3>
+      <p id="qr-branch-label" class="text-xs text-slate-500 mt-1">Fanta Digital Printing • 19 November 2026</p>
+
+      <div class="my-6 p-5 rounded-2xl bg-slate-50 border-2 border-dashed border-blue-200 inline-block">
+        <div id="qr-svg-container" class="w-48 h-48 mx-auto bg-white p-3 rounded-xl shadow-sm flex items-center justify-center"></div>
+        <div class="mt-3 font-mono text-2xl font-extrabold tracking-widest text-blue-700" id="qr-code-text">PPH-8492</div>
+        <div class="text-[11px] font-semibold text-slate-500 mt-1">Valid Today Only • Expires 11:59 PM</div>
+      </div>
+
+      <div class="flex gap-2.5">
+        <button onclick="copyDailyCode()" class="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition">
+          <i class="fa-regular fa-copy mr-1"></i> Copy Code
+        </button>
+        <button onclick="closeQrModal()" class="flex-1 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 4. COMPLETE APPLICATION LOGIC & STATE ENGINE                          -->
+  <!-- ===================================================================== -->
+  <script>
+    // -------------------------------------------------------------------------
+    // CURATED MONTHLY COVER ARTWORKS (P&P-HUB LEVEL 1)
+    // -------------------------------------------------------------------------
+    const MONTHS_DATA = [
+      { index: 0, name: 'January', days: 31, theme: 'from-blue-900 via-indigo-800 to-cyan-700', icon: 'fa-snowflake', tagline: 'New Year Corporate Branding', img: 'https://images.unsplash.com/photo-1562654501-a0ccc0fc3fb1?auto=format&fit=crop&w=600&q=80' },
+      { index: 1, name: 'February', days: 28, theme: 'from-rose-900 via-pink-800 to-amber-700', icon: 'fa-heart', tagline: 'Event Flyers & Luxury Invites', img: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=600&q=80' },
+      { index: 2, name: 'March', days: 31, theme: 'from-emerald-900 via-teal-800 to-cyan-700', icon: 'fa-flag', tagline: 'Independence & Civic Prints', img: 'https://images.unsplash.com/photo-1503694978374-8a2fa686963a?auto=format&fit=crop&w=600&q=80' },
+      { index: 3, name: 'April', days: 30, theme: 'from-violet-900 via-purple-800 to-indigo-700', icon: 'fa-book-open', tagline: 'Academic Journals & Programs', img: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80' },
+      { index: 4, name: 'May', days: 31, theme: 'from-sky-900 via-blue-800 to-indigo-700', icon: 'fa-layer-group', tagline: 'Large Format Banners & Vinyl', img: 'https://images.unsplash.com/photo-1572949645841-094f3a9c4c94?auto=format&fit=crop&w=600&q=80' },
+      { index: 5, name: 'June', days: 30, theme: 'from-amber-900 via-orange-800 to-yellow-700', icon: 'fa-graduation-cap', tagline: 'Graduation Brochures & Certificates', img: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=600&q=80' },
+      { index: 6, name: 'July', days: 31, theme: 'from-cyan-900 via-blue-800 to-slate-800', icon: 'fa-newspaper', tagline: 'Mid-Year Annual Reports', img: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=600&q=80' },
+      { index: 7, name: 'August', days: 31, theme: 'from-teal-900 via-emerald-800 to-green-700', icon: 'fa-id-card', tagline: 'Custom Packaging & Labels', img: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=600&q=80' },
+      { index: 8, name: 'September', days: 30, theme: 'from-indigo-950 via-blue-900 to-sky-700', icon: 'fa-pen-nib', tagline: 'Back-to-School Exercise Books', img: 'https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&w=600&q=80' },
+      { index: 9, name: 'October', days: 31, theme: 'from-orange-950 via-red-900 to-amber-700', icon: 'fa-palette', tagline: 'Campaign Posters & Stickers', img: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=600&q=80' },
+      { index: 10, name: 'November', days: 30, theme: 'from-slate-900 via-blue-900 to-cyan-700', icon: 'fa-calendar-check', tagline: 'Calendars, Diaries & Souvenirs', img: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=600&q=80' },
+      { index: 11, name: 'December', days: 31, theme: 'from-red-950 via-rose-900 to-amber-700', icon: 'fa-gift', tagline: 'Festive Cards & Hampers Branding', img: 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=600&q=80' }
+    ];
+
+    const JOB_STATUSES = [
+      'Received',
+      'Processing',
+      'Ready for Printing',
+      'Printing',
+      'Printed',
+      'Ready for Collection',
+      'Collected'
+    ];
+
+    const SERVICE_TYPES = [
+      'Colour Printing',
+      'Black-and-White Printing',
+      'Photocopying',
+      'Scanning',
+      'Binding',
+      'Lamination',
+      'Large Format / Banner',
+      'Other Printing Service'
+    ];
+
+    // -------------------------------------------------------------------------
+    // SYSTEM DATABASE (ISOLATED BY BRANCH ID)
+    // -------------------------------------------------------------------------
+    const DEFAULT_STATE = {
+      todayStr: '2026-11-19',
+      currentYear: 2026,
+      branches: {
+        'FANTA-ACC': {
+          branchId: 'FANTA-ACC',
+          name: 'Fanta Digital Printing',
+          area: 'Osu Oxford Street',
+          city: 'Accra',
+          phone: '+233 24 412 8890',
+          storageQuotaMB: 10240,
+          retentionDays: 365,
+          dailyCodes: {
+            '2026-11-19': 'PPH-8492',
+            '2026-11-18': 'PPH-3109',
+            '2026-11-15': 'PPH-7741',
+            '2026-10-22': 'PPH-5028',
+            '2026-09-10': 'PPH-1940'
+          }
+        },
+        'ROYAL-KUM': {
+          branchId: 'ROYAL-KUM',
+          name: 'Royal Press Kumasi',
+          area: 'Adum Central',
+          city: 'Kumasi',
+          phone: '+233 20 881 3340',
+          storageQuotaMB: 10240,
+          retentionDays: 365,
+          dailyCodes: {
+            '2026-11-19': 'ROY-6621',
+            '2026-11-17': 'ROY-1184'
+          }
+        }
+      },
+      staff: [
+        {
+          id: 'STF-01',
+          branchId: 'FANTA-ACC',
+          fullName: 'Kwame Boateng',
+          username: 'kwame.manager',
+          password: 'password',
+          role: 'manager',
+          active: true,
+          permissions: {
+            viewFiles: true, updateStatus: true, recordBilling: true,
+            viewFinance: true, deleteFiles: true, manageCodes: true, manageStaff: true
+          }
+        },
+        {
+          id: 'STF-02',
+          branchId: 'FANTA-ACC',
+          fullName: 'Ama Serwaa',
+          username: 'ama.operator',
+          password: 'password',
+          role: 'operator',
+          active: true,
+          permissions: {
+            viewFiles: true, updateStatus: true, recordBilling: true,
+            viewFinance: false, deleteFiles: false, manageCodes: false, manageStaff: false
+          }
+        },
+        {
+          id: 'STF-03',
+          branchId: 'FANTA-ACC',
+          fullName: 'Daniel Ofori',
+          username: 'daniel.print',
+          password: 'password',
+          role: 'operator',
+          active: true,
+          permissions: {
+            viewFiles: true, updateStatus: true, recordBilling: false,
+            viewFinance: false, deleteFiles: false, manageCodes: false, manageStaff: false
+          }
+        },
+        {
+          id: 'STF-04',
+          branchId: 'ROYAL-KUM',
+          fullName: 'Abena Konadu',
+          username: 'abena.royal',
+          password: 'password',
+          role: 'manager',
+          active: true,
+          permissions: {
+            viewFiles: true, updateStatus: true, recordBilling: true,
+            viewFinance: true, deleteFiles: true, manageCodes: true, manageStaff: true
+          }
+        }
+      ],
+      senders: [
+        { id: 'SND-1001', name: 'Kofi Mensah', pin: '1234', phone: '024 555 0192', failedAttempts: 0, lockedUntil: null },
+        { id: 'SND-1002', name: 'Grace Asante (EventPlus)', pin: '4321', phone: '055 890 1123', failedAttempts: 0, lockedUntil: null },
+        { id: 'SND-1003', name: 'Dr. Samuel Owusu', pin: '2026', phone: '020 331 9980', failedAttempts: 0, lockedUntil: null }
+      ],
+      submissions: [
+        {
+          id: 'SUB-2026-1119-01',
+          branchId: 'FANTA-ACC',
+          senderId: 'SND-1001',
+          senderName: 'Kofi Mensah',
+          customName: 'Royal Wedding Gold Invitation & Program',
+          dailyCode: 'PPH-8492',
+          year: 2026,
+          month: 10, // November (0-indexed)
+          day: 19,
+          date: '2026-11-19',
+          time: '08:15 AM',
+          status: 'Printing',
+          assignedTo: 'Ama Serwaa',
+          billing: {
+            serviceType: 'Colour Printing',
+            copies: 150,
+            pages: 4,
+            unitPrice: 2.50,
+            totalAmount: 375.00,
+            amountPaid: 250.00,
+            paymentMethod: 'MoMo',
+            paymentDate: '2026-11-19'
+          },
+          files: [
+            {
+              fileId: 'FIL-901',
+              originalName: 'Mensah_Wedding_Invite_Front.png',
+              type: 'image',
+              ext: 'PNG',
+              size: '2.4 MB',
+              previewUrl: 'https://images.unsplash.com/photo-1607190074257-dd4b7af0309f?auto=format&fit=crop&w=800&q=80'
+            },
+            {
+              fileId: 'FIL-902',
+              originalName: 'Church_Order_of_Service_2026.pdf',
+              type: 'pdf',
+              ext: 'PDF',
+              size: '4.1 MB',
+              pagesPreview: 'Order of Service • St. Peter Cathedral • 4 Pages A5 Glossy Art Paper'
+            }
+          ]
+        },
+        {
+          id: 'SUB-2026-1119-02',
+          branchId: 'FANTA-ACC',
+          senderId: 'SND-1002',
+          senderName: 'Grace Asante (EventPlus)',
+          customName: 'Accra Tech Summit Roll-Up Banner & Badges',
+          dailyCode: 'PPH-8492',
+          year: 2026,
+          month: 10,
+          day: 19,
+          date: '2026-11-19',
+          time: '08:26 AM',
+          status: 'Ready for Printing',
+          assignedTo: 'Daniel Ofori',
+          billing: {
+            serviceType: 'Large Format / Banner',
+            copies: 4,
+            pages: 1,
+            unitPrice: 180.00,
+            totalAmount: 720.00,
+            amountPaid: 720.00,
+            paymentMethod: 'Bank Transfer',
+            paymentDate: '2026-11-19'
+          },
+          files: [
+            {
+              fileId: 'FIL-903',
+              originalName: 'Tech_Summit_Stage_Backdrop_3x2m.jpg',
+              type: 'image',
+              ext: 'JPG',
+              size: '6.8 MB',
+              previewUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80'
+            },
+            {
+              fileId: 'FIL-904',
+              originalName: 'VIP_Speaker_Badges_List.docx',
+              type: 'word',
+              ext: 'DOCX',
+              size: '840 KB',
+              pagesPreview: '85 VIP Speaker & Delegate Lanyard Cards • Laminated Finish'
+            }
+          ]
+        },
+        {
+          id: 'SUB-2026-1118-01',
+          branchId: 'FANTA-ACC',
+          senderId: 'SND-1003',
+          senderName: 'Dr. Samuel Owusu',
+          customName: 'Medical Conference Handouts & Spiral Binding',
+          dailyCode: 'PPH-3109',
+          year: 2026,
+          month: 10,
+          day: 18,
+          date: '2026-11-18',
+          time: '02:40 PM',
+          status: 'Collected',
+          assignedTo: 'Ama Serwaa',
+          billing: {
+            serviceType: 'Binding',
+            copies: 60,
+            pages: 48,
+            unitPrice: 12.00,
+            totalAmount: 720.00,
+            amountPaid: 720.00,
+            paymentMethod: 'Cash',
+            paymentDate: '2026-11-18'
+          },
+          files: [
+            {
+              fileId: 'FIL-905',
+              originalName: 'Cardiology_Symposium_Manual.pdf',
+              type: 'pdf',
+              ext: 'PDF',
+              size: '9.2 MB',
+              pagesPreview: '48 Pages Duplex Laser Print + Clear Acetate Cover + Black Spiral Coil'
+            }
+          ]
+        },
+        {
+          id: 'SUB-2026-1022-01',
+          branchId: 'FANTA-ACC',
+          senderId: 'SND-1001',
+          senderName: 'Kofi Mensah',
+          customName: 'October Product Catalog Brochure',
+          dailyCode: 'PPH-5028',
+          year: 2026,
+          month: 9, // October
+          day: 22,
+          date: '2026-10-22',
+          time: '11:10 AM',
+          status: 'Printed',
+          assignedTo: 'Ama Serwaa',
+          billing: {
+            serviceType: 'Colour Printing',
+            copies: 200,
+            pages: 8,
+            unitPrice: 3.00,
+            totalAmount: 600.00,
+            amountPaid: 400.00,
+            paymentMethod: 'MoMo',
+            paymentDate: '2026-10-22'
+          },
+          files: [
+            {
+              fileId: 'FIL-906',
+              originalName: 'Autumn_Catalog_Spread.jpg',
+              type: 'image',
+              ext: 'JPG',
+              size: '3.5 MB',
+              previewUrl: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=800&q=80'
+            }
+          ]
+        },
+        {
+          id: 'SUB-2026-1119-R1',
+          branchId: 'ROYAL-KUM',
+          senderId: 'SND-1002',
+          senderName: 'Grace Asante (EventPlus)',
+          customName: 'Kumasi Trade Fair Flyers',
+          dailyCode: 'ROY-6621',
+          year: 2026,
+          month: 10,
+          day: 19,
+          date: '2026-11-19',
+          time: '09:05 AM',
+          status: 'Received',
+          assignedTo: 'Abena Konadu',
+          billing: {
+            serviceType: 'Colour Printing',
+            copies: 500,
+            pages: 2,
+            unitPrice: 1.00,
+            totalAmount: 500.00,
+            amountPaid: 500.00,
+            paymentMethod: 'Cash',
+            paymentDate: '2026-11-19'
+          },
+          files: [
+            {
+              fileId: 'FIL-999',
+              originalName: 'Kumasi_Expo_Flyer_A5.png',
+              type: 'image',
+              ext: 'PNG',
+              size: '1.9 MB',
+              previewUrl: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=800&q=80'
+            }
+          ]
+        }
+      ],
+      expenses: [
+        { id: 'EXP-01', branchId: 'FANTA-ACC', date: '2026-11-19', category: 'Toner & Ink Cartridges', description: 'CMYK Laser Toner Refill Pack', amount: 420.00, recordedBy: 'Kwame Boateng' },
+        { id: 'EXP-02', branchId: 'FANTA-ACC', date: '2026-11-18', category: 'Paper Stock', description: '5 Boxes A4 80gsm Bond Paper', amount: 310.00, recordedBy: 'Kwame Boateng' },
+        { id: 'EXP-03', branchId: 'FANTA-ACC', date: '2026-11-15', category: 'Utilities & Power', description: 'ECG Prepaid Electricity Top-up', amount: 180.00, recordedBy: 'Ama Serwaa' },
+        { id: 'EXP-04', branchId: 'ROYAL-KUM', date: '2026-11-19', category: 'Paper Stock', description: 'Glossy Art Card 300gsm', amount: 250.00, recordedBy: 'Abena Konadu' }
+      ],
+      activities: [
+        { id: 'ACT-01', branchId: 'FANTA-ACC', user: 'Kofi Mensah (Sender)', action: 'Submitted 2 files using Daily Code PPH-8492', target: 'SUB-2026-1119-01', date: '2026-11-19', time: '08:15 AM' },
+        { id: 'ACT-02', branchId: 'FANTA-ACC', user: 'Ama Serwaa (Operator)', action: 'Updated job status to Printing & recorded GH₵ 250 MoMo deposit', target: 'SUB-2026-1119-01', date: '2026-11-19', time: '08:20 AM' },
+        { id: 'ACT-03', branchId: 'FANTA-ACC', user: 'Grace Asante (Sender)', action: 'Submitted 2 files using Daily Code PPH-8492', target: 'SUB-2026-1119-02', date: '2026-11-19', time: '08:26 AM' },
+        { id: 'ACT-04', branchId: 'FANTA-ACC', user: 'Kwame Boateng (Manager)', action: 'Generated Daily Submission Code PPH-8492', target: 'FANTA-ACC', date: '2026-11-19', time: '07:00 AM' }
+      ],
+      notifications: [
+        { id: 'NTF-01', branchId: 'FANTA-ACC', type: 'submission', title: 'New Submission Received', msg: 'Grace Asante uploaded "Accra Tech Summit Roll-Up Banner & Badges" (2 files).', time: '5 mins ago', unread: true },
+        { id: 'NTF-02', branchId: 'FANTA-ACC', type: 'payment', title: 'MoMo Payment Recorded', msg: 'Ama Serwaa recorded GH₵ 250.00 payment for SUB-2026-1119-01.', time: '12 mins ago', unread: true },
+        { id: 'NTF-03', branchId: 'FANTA-ACC', type: 'code', title: 'Daily Code Active', msg: 'Daily Submission Code PPH-8492 is active for 19 November 2026.', time: '1 hour ago', unread: false }
+      ]
+    };
+
+    // Load or initialize persistent state
+    let appState = JSON.parse(localStorage.getItem('pphub_state_v1')) || DEFAULT_STATE;
+
+    function saveState() {
+      localStorage.setItem('pphub_state_v1', JSON.stringify(appState));
+    }
+
+    // Current Active Session
+    let currentSession = {
+      role: null,        // 'manager' | 'operator' | 'sender'
+      user: null,        // staff object or sender object
+      branchId: null     // active branch for manager/operator, or selected branch for sender
+    };
+
+    // File Explorer Navigation State (4 Levels of P&P-HUB)
+    let fileExplorer = {
+      level: 1,          // 1 = 12 Months Cover Grid, 2 = Daily Folders Grid, 3 = WhatsApp Day Gallery
+      selectedMonth: 10, // 0..11 (November = 10)
+      selectedDay: 19,
+      searchQuery: '',
+      statusFilter: 'ALL'
+    };
+
+    // Sender Submission Draft State
+    let senderWorkflow = {
+      connectedBranchId: null,
+      verifiedDailyCode: '',
+      stagedFiles: []
+    };
+
+    // Lightbox active file reference
+    let activeLightboxFile = null;
+
+    // -------------------------------------------------------------------------
+    // TOAST NOTIFICATION HELPER
+    // -------------------------------------------------------------------------
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const colors = {
+        success: 'bg-emerald-600 text-white border-emerald-500',
+        error: 'bg-red-600 text-white border-red-500',
+        info: 'bg-navy-900 text-white border-cyan-400/40'
+      };
+      const icons = {
+        success: 'fa-circle-check',
+        error: 'fa-triangle-exclamation',
+        info: 'fa-circle-info'
+      };
+      const toast = document.createElement('div');
+      toast.className = `pointer-events-auto px-4 py-3 rounded-2xl shadow-xl border text-xs font-bold flex items-center gap-3 animate-fade-in ${colors[type] || colors.info}`;
+      toast.innerHTML = `<i class="fa-solid ${icons[type]} text-base"></i><span class="flex-1 leading-snug">${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3600);
+    }
+
+    // -------------------------------------------------------------------------
+    // AUTHENTICATION PORTAL LOGIC (CHARIS TWO-PANEL)
+    // -------------------------------------------------------------------------
+    function selectAuthRole(role) {
+      ['manager', 'operator', 'sender'].forEach(r => {
+        const card = document.getElementById(`role-card-${r}`);
+        const panel = document.getElementById(`auth-form-${r}`);
+        if (r === role) {
+          card.className = 'role-select-card text-left p-4 rounded-2xl border transition-all duration-200 bg-cyan-400/15 border-cyan-400 luxury-glow';
+          panel.classList.remove('hidden');
+        } else {
+          card.className = 'role-select-card text-left p-4 rounded-2xl border transition-all duration-200 bg-white/[0.04] border-white/10 hover:border-cyan-400/60 hover:bg-white/[0.08]';
+          panel.classList.add('hidden');
+        }
+      });
+    }
+
+    function toggleAuthSubTab(role, tab) {
+      const loginBtn = document.getElementById(`tab-${role}-login`);
+      const regBtn = document.getElementById(`tab-${role}-register`);
+      const loginPanel = document.getElementById(`panel-${role}-login`);
+      const regPanel = document.getElementById(`panel-${role}-register`);
+
+      if (tab === 'login') {
+        loginBtn.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-sm transition';
+        regBtn.className = 'flex-1 py-2 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition';
+        loginPanel.classList.remove('hidden');
+        regPanel.classList.add('hidden');
+      } else {
+        regBtn.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-sm transition';
+        loginBtn.className = 'flex-1 py-2 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition';
+        regPanel.classList.remove('hidden');
+        loginPanel.classList.add('hidden');
+      }
+    }
+
+    function handleManagerRegister(e) {
+      e.preventDefault();
+      const pressName = document.getElementById('reg-press-name').value.trim();
+      const area = document.getElementById('reg-press-area').value.trim();
+      const city = document.getElementById('reg-press-city').value.trim();
+      const fullName = document.getElementById('reg-mgr-name').value.trim();
+      const username = document.getElementById('reg-mgr-user').value.trim().toLowerCase();
+      const password = document.getElementById('reg-mgr-pass').value;
+
+      const prefix = pressName.replace(/[^A-Za-z]/g, '').substring(0, 5).toUpperCase() || 'PRESS';
+      const cityCode = city.replace(/[^A-Za-z]/g, '').substring(0, 3).toUpperCase() || 'GH';
+      const randNum = Math.floor(10 + Math.random() * 89);
+      const branchId = `${prefix}-${cityCode}${randNum}`;
+      const todayCode = `PPH-${Math.floor(1000 + Math.random() * 9000)}`;
+
+      appState.branches[branchId] = {
+        branchId,
+        name: pressName,
+        area,
+        city,
+        phone: '+233 24 000 0000',
+        storageQuotaMB: 10240,
+        retentionDays: 365,
+        dailyCodes: { [appState.todayStr]: todayCode }
+      };
+
+      const newManager = {
+        id: `STF-${Date.now().toString().slice(-4)}`,
+        branchId,
+        fullName,
+        username,
+        password,
+        role: 'manager',
+        active: true,
+        permissions: {
+          viewFiles: true, updateStatus: true, recordBilling: true,
+          viewFinance: true, deleteFiles: true, manageCodes: true, manageStaff: true
+        }
+      };
+
+      appState.staff.push(newManager);
+      logActivity(branchId, `${fullName} (Manager)`, `Registered new printing press branch "${pressName}"`, branchId);
+      saveState();
+
+      showToast(`Branch Created! Your Unique Branch Code is ${branchId}`, 'success');
+      enterWorkspace('manager', newManager, branchId);
+    }
+
+    function handleManagerLogin(e) {
+      e.preventDefault();
+      const branchId = document.getElementById('mgr-login-branch').value.trim().toUpperCase();
+      const username = document.getElementById('mgr-login-user').value.trim().toLowerCase();
+      const password = document.getElementById('mgr-login-pass').value;
+
+      const branch = appState.branches[branchId];
+      if (!branch) {
+        showToast('Branch Code not found. Please check and try again.', 'error');
+        return;
+      }
+      const manager = appState.staff.find(s =>
+        s.branchId === branchId &&
+        s.role === 'manager' &&
+        (s.username.toLowerCase() === username || s.fullName.toLowerCase() === username) &&
+        s.password === password
+      );
+
+      if (!manager) {
+        showToast('Invalid Manager username or password for this branch.', 'error');
+        return;
+      }
+
+      logActivity(branchId, `${manager.fullName} (Manager)`, 'Signed into Branch Manager Dashboard', branchId);
+      saveState();
+      enterWorkspace('manager', manager, branchId);
+    }
+
+    function handleOperatorLogin(e) {
+      e.preventDefault();
+      const branchId = document.getElementById('op-login-branch').value.trim().toUpperCase();
+      const username = document.getElementById('op-login-user').value.trim().toLowerCase();
+      const password = document.getElementById('op-login-pass').value;
+
+      if (!appState.branches[branchId]) {
+        showToast('Assigned Branch Code not recognized.', 'error');
+        return;
+      }
+
+      const operator = appState.staff.find(s =>
+        s.branchId === branchId &&
+        s.role === 'operator' &&
+        (s.username.toLowerCase() === username || s.id.toLowerCase() === username) &&
+        s.password === password
+      );
+
+      if (!operator) {
+        showToast('Invalid Operator credentials for this branch.', 'error');
+        return;
+      }
+      if (!operator.active) {
+        showToast('Your operator account has been deactivated by the Branch Manager.', 'error');
+        return;
+      }
+
+      logActivity(branchId, `${operator.fullName} (Operator)`, 'Signed into Printing Operator Console', branchId);
+      saveState();
+      enterWorkspace('operator', operator, branchId);
+    }
+
+    function handleSenderRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-snd-name').value.trim();
+      const pin = document.getElementById('reg-snd-pin').value.trim();
+      if (!/^\d{4}$/.test(pin)) {
+        showToast('PIN must be exactly 4 digits.', 'error');
+        return;
+      }
+      const senderId = `SND-${Math.floor(1000 + Math.random() * 9000)}`;
+      const newSender = { id: senderId, name, pin, phone: 'Not Provided', failedAttempts: 0, lockedUntil: null };
+      appState.senders.push(newSender);
+      saveState();
+
+      showToast(`Account created! Your Sender ID is ${senderId}`, 'success');
+      enterWorkspace('sender', newSender, null);
+    }
+
+    function handleSenderLogin(e) {
+      e.preventDefault();
+      const query = document.getElementById('snd-login-id').value.trim().toLowerCase();
+      const pin = document.getElementById('snd-login-pin').value.trim();
+      const warnBox = document.getElementById('sender-pin-warning');
+      const warnText = document.getElementById('sender-pin-warning-text');
+
+      const sender = appState.senders.find(s => s.id.toLowerCase() === query || s.name.toLowerCase() === query);
+      if (!sender) {
+        warnBox.classList.remove('hidden');
+        warnText.innerText = 'Sender ID or Name not found. Please register a new sender account.';
+        return;
+      }
+
+      if (sender.failedAttempts >= 5) {
+        warnBox.classList.remove('hidden');
+        warnText.innerText = 'Security Lockout: Too many failed 4-digit PIN attempts. Contact support.';
+        return;
+      }
+
+      if (sender.pin !== pin) {
+        sender.failedAttempts = (sender.failedAttempts || 0) + 1;
+        saveState();
+        warnBox.classList.remove('hidden');
+        warnText.innerText = `Incorrect 4-digit PIN. Attempt ${sender.failedAttempts} of 5 before lockout.`;
+        return;
+      }
+
+      sender.failedAttempts = 0;
+      warnBox.classList.add('hidden');
+      saveState();
+      enterWorkspace('sender', sender, null);
+    }
+
+    function quickDemoLogin(role, idOrBranch) {
+      if (role === 'manager') {
+        const mgr = appState.staff.find(s => s.branchId === idOrBranch && s.role === 'manager');
+        if (mgr) enterWorkspace('manager', mgr, idOrBranch);
+      } else if (role === 'operator') {
+        const op = appState.staff.find(s => s.branchId === idOrBranch && s.role === 'operator');
+        if (op) enterWorkspace('operator', op, idOrBranch);
+      } else if (role === 'sender') {
+        const snd = appState.senders.find(s => s.id === idOrBranch);
+        if (snd) enterWorkspace('sender', snd, null);
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // ENTER WORKSPACE & NAVIGATION ROUTER
+    // -------------------------------------------------------------------------
+    let activeRoute = 'dashboard';
+
+    function enterWorkspace(role, user, branchId) {
+      currentSession = { role, user, branchId };
+      document.getElementById('auth-portal').classList.add('hidden');
+      document.getElementById('app-workspace').classList.remove('hidden');
+
+      // Populate Sidebar Profile
+      const displayName = role === 'sender' ? user.name : user.fullName;
+      const initials = displayName.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+      document.getElementById('sidebar-avatar').innerText = initials;
+      document.getElementById('sidebar-user-name').innerText = displayName;
+
+      if (role === 'sender') {
+        document.getElementById('sidebar-branch-tag').innerText = user.id;
+        document.getElementById('sidebar-user-role').innerText = 'Customer / Sender';
+        document.getElementById('topbar-daily-code-pill').classList.add('hidden');
+        document.getElementById('topbar-daily-code-pill').classList.remove('sm:flex');
+      } else {
+        const branch = appState.branches[branchId];
+        ensureTodayDailyCode(branchId);
+        document.getElementById('sidebar-branch-tag').innerText = branchId;
+        document.getElementById('sidebar-user-role').innerText = role === 'manager' ? 'Branch Manager' : 'Printing Operator';
+        document.getElementById('topbar-daily-code-pill').classList.remove('hidden');
+        document.getElementById('topbar-daily-code-pill').classList.add('sm:flex');
+        document.getElementById('topbar-daily-code-val').innerText = branch.dailyCodes[appState.todayStr];
+      }
+
+      buildSidebarMenu();
+      navigateTo(role === 'sender' ? 'sender-submit' : 'dashboard');
+    }
+
+    function logoutUser() {
+      currentSession = { role: null, user: null, branchId: null };
+      senderWorkflow = { connectedBranchId: null, verifiedDailyCode: '', stagedFiles: [] };
+      document.getElementById('app-workspace').classList.add('hidden');
+      document.getElementById('auth-portal').classList.remove('hidden');
+      showToast('Logged out securely.', 'info');
+    }
+
+    function toggleMobileSidebar(open) {
+      const sb = document.getElementById('app-sidebar');
+      const bd = document.getElementById('mobile-sidebar-backdrop');
+      if (open) {
+        sb.classList.remove('-translate-x-full');
+        bd.classList.remove('hidden');
+      } else {
+        sb.classList.add('-translate-x-full');
+        bd.classList.add('hidden');
+      }
+    }
+
+    function buildSidebarMenu() {
+      const nav = document.getElementById('sidebar-nav');
+      const { role, user } = currentSession;
+      let items = [];
+
+      if (role === 'manager') {
+        items = [
+          { section: 'Operations & Files' },
+          { id: 'dashboard', icon: 'fa-chart-pie', label: 'Dashboard Overview' },
+          { id: 'sent-files', icon: 'fa-folder-tree', label: 'Sent Files Management', badge: 'P&P' },
+          { id: 'daily-codes', icon: 'fa-key', label: 'Daily Submission Codes' },
+          { id: 'printing-queue', icon: 'fa-print', label: 'Printing Activities & Queue' },
+          { id: 'printing-history', icon: 'fa-clock-rotate-left', label: 'Printing History' },
+          { section: 'People & Finance' },
+          { id: 'money-management', icon: 'fa-coins', label: 'Money Management (GH₵)' },
+          { id: 'expenses', icon: 'fa-receipt', label: 'Expenses & Profit' },
+          { id: 'reports-analytics', icon: 'fa-chart-line', label: 'Reports & Analytics' },
+          { id: 'sender-management', icon: 'fa-address-book', label: 'Sender Management' },
+          { id: 'staff-management', icon: 'fa-users-gear', label: 'Staff & Permissions' },
+          { section: 'Administration' },
+          { id: 'storage-settings', icon: 'fa-hard-drive', label: 'Storage & Archives' },
+          { id: 'notifications', icon: 'fa-bell', label: 'Notifications & Audit Log' },
+          { id: 'branch-settings', icon: 'fa-sliders', label: 'Branch & Security Settings' }
+        ];
+      } else if (role === 'operator') {
+        const perms = user.permissions;
+        items = [
+          { section: 'Operator Workspace' },
+          { id: 'dashboard', icon: 'fa-gauge-high', label: 'Operator Dashboard' },
+          ...(perms.viewFiles ? [{ id: 'sent-files', icon: 'fa-folder-tree', label: 'Sent Files Management', badge: 'P&P' }] : []),
+          { id: 'printing-queue', icon: 'fa-print', label: 'Printing Queue' },
+          { id: 'printing-history', icon: 'fa-clock-rotate-left', label: 'Printing History' },
+          ...(perms.viewFinance ? [{ id: 'money-management', icon: 'fa-coins', label: 'Money Management (GH₵)' }] : []),
+          ...(perms.manageCodes ? [{ id: 'daily-codes', icon: 'fa-key', label: 'Daily Submission Codes' }] : []),
+          { id: 'notifications', icon: 'fa-bell', label: 'Activity & Notifications' }
+        ];
+      } else if (role === 'sender') {
+        items = [
+          { section: 'Customer Portal' },
+          { id: 'sender-submit', icon: 'fa-cloud-arrow-up', label: 'Submit Files to Press' },
+          { id: 'sender-history', icon: 'fa-list-check', label: 'My Submissions & Status' },
+          { id: 'sender-branches', icon: 'fa-building', label: 'Find Printing Presses' }
+        ];
+      }
+
+      nav.innerHTML = items.map(item => {
+        if (item.section) {
+          return `<div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-500 px-3 pt-4 pb-1.5">${item.section}</div>`;
+        }
+        const isActive = activeRoute === item.id;
+        return `
+          <button onclick="navigateTo('${item.id}')"
+            class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+              isActive
+                ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-600/30'
+                : 'text-slate-300 hover:bg-white/[0.06] hover:text-white'
+            }">
+            <span class="flex items-center gap-3 truncate">
+              <i class="fa-solid ${item.icon} w-4 text-center ${isActive ? 'text-cyan-300' : 'text-slate-400'}"></i>
+              <span class="truncate">${item.label}</span>
+            </span>
+            ${item.badge ? `<span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-cyan-400/20 text-cyan-300 border border-cyan-400/30">${item.badge}</span>` : ''}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function navigateTo(route) {
+      activeRoute = route;
+      toggleMobileSidebar(false);
+      buildSidebarMenu();
+
+      const main = document.getElementById('workspace-main');
+      const { role, branchId, user } = currentSession;
+      const branch = branchId ? appState.branches[branchId] : null;
+
+      // Update Header Titles
+      const titles = {
+        'dashboard': ['Dashboard Overview', `${branch?.name || ''} • ${branch?.area || ''}, ${branch?.city || ''}`],
+        'sent-files': ['SENT FILES MANAGEMENT', `Exact P&P-HUB Monthly & Daily Visual Archive • ${branch?.name || ''}`],
+        'daily-codes': ['Daily Submission Code System', `Shared daily security code for ${branch?.name || ''}`],
+        'printing-queue': ['Printing Operations & Active Queue', 'Update job statuses, print specs, copies & customer billing'],
+        'printing-history': ['Completed Printing History', 'Historical log of printed and collected jobs'],
+        'money-management': ['Financial & Money Management (GH₵)', 'Track job income, payments received & outstanding balances'],
+        'expenses': ['Expenses & Profit Overview', 'Record operational expenses and calculate net branch profit'],
+        'reports-analytics': ['Reports & Business Analytics', 'Service breakdown, staff performance & revenue trends'],
+        'sender-management': ['Branch Sender Directory', 'Customers who have submitted documents to this branch'],
+        'staff-management': ['Staff & Operator Permissions', 'Create operators, toggle active status & control access rights'],
+        'storage-settings': ['Cloud Storage & Retention Settings', 'Branch storage quota, backups & archive policies'],
+        'notifications': ['Notifications & Audit Activity Log', 'Real-time branch alerts and immutable user action trail'],
+        'branch-settings': ['Branch & Security Settings', 'Manage printing press identity, Branch Code & session rules'],
+        'sender-submit': ['Submit Documents to Printing Press', `Logged in as ${user.name} (${user.id})`],
+        'sender-history': ['My Submission History & Status', 'Track your uploaded files across printing presses'],
+        'sender-branches': ['Registered Printing Presses', 'Search presses by name or city and connect directly']
+      };
+
+      const [t, sub] = titles[route] || ['P&P-HUB Workspace', ''];
+      document.getElementById('topbar-title').innerText = t;
+      document.getElementById('topbar-subtitle').innerText = sub;
+
+      // Route Renderer
+      if (route === 'dashboard') main.innerHTML = renderDashboardView();
+      else if (route === 'sent-files') main.innerHTML = renderSentFilesView();
+      else if (route === 'daily-codes') main.innerHTML = renderDailyCodesView();
+      else if (route === 'printing-queue') main.innerHTML = renderPrintingQueueView(false);
+      else if (route === 'printing-history') main.innerHTML = renderPrintingQueueView(true);
+      else if (route === 'money-management') main.innerHTML = renderMoneyManagementView();
+      else if (route === 'expenses') main.innerHTML = renderExpensesView();
+      else if (route === 'reports-analytics') main.innerHTML = renderReportsAnalyticsView();
+      else if (route === 'sender-management') main.innerHTML = renderSenderManagementView();
+      else if (route === 'staff-management') main.innerHTML = renderStaffManagementView();
+      else if (route === 'storage-settings') main.innerHTML = renderStorageSettingsView();
+      else if (route === 'notifications') main.innerHTML = renderNotificationsView();
+      else if (route === 'branch-settings') main.innerHTML = renderBranchSettingsView();
+      else if (route === 'sender-submit') main.innerHTML = renderSenderSubmitView();
+      else if (route === 'sender-history') main.innerHTML = renderSenderHistoryView();
+      else if (route === 'sender-branches') main.innerHTML = renderSenderBranchesView();
+    }
+
+    // -------------------------------------------------------------------------
+    // DAILY SUBMISSION CODE ENGINE
+    // -------------------------------------------------------------------------
+    function ensureTodayDailyCode(branchId) {
+      const branch = appState.branches[branchId];
+      if (!branch) return '';
+      if (!branch.dailyCodes[appState.todayStr]) {
+        const prefix = branchId.split('-')[0].substring(0, 3).toUpperCase();
+        branch.dailyCodes[appState.todayStr] = `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`;
+        saveState();
+      }
+      return branch.dailyCodes[appState.todayStr];
+    }
+
+    function regenerateDailyCode() {
+      const { branchId, user } = currentSession;
+      const branch = appState.branches[branchId];
+      const prefix = branchId.split('-')[0].substring(0, 3).toUpperCase();
+      const newCode = `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`;
+      branch.dailyCodes[appState.todayStr] = newCode;
+
+      document.getElementById('topbar-daily-code-val').innerText = newCode;
+      logActivity(branchId, user.fullName, `Regenerated Daily Submission Code to ${newCode}`, branchId);
+      addNotification(branchId, 'code', 'Daily Submission Code Updated', `New daily code ${newCode} generated by ${user.fullName}.`);
+      saveState();
+
+      showToast(`New Daily Submission Code generated: ${newCode}`, 'success');
+      if (activeRoute === 'daily-codes' || activeRoute === 'dashboard') navigateTo(activeRoute);
+    }
+
+    function copyDailyCode(specificCode) {
+      const code = specificCode || appState.branches[currentSession.branchId]?.dailyCodes[appState.todayStr];
+      if (!code) return;
+      const tempInput = document.createElement('input');
+      tempInput.value = code;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      showToast(`Copied Daily Code "${code}" to clipboard!`, 'success');
+    }
+
+    function openQrModal() {
+      const branch = appState.branches[currentSession.branchId];
+      const code = branch.dailyCodes[appState.todayStr];
+      document.getElementById('qr-branch-label').innerText = `${branch.name} (${branch.branchId}) • 19 November 2026`;
+      document.getElementById('qr-code-text').innerText = code;
+
+      // Generate deterministic crisp SVG QR matrix pattern
+      let rects = '';
+      const seed = code.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+      for (let r = 0; r < 11; r++) {
+        for (let c = 0; c < 11; c++) {
+          const isFinder = (r < 3 && c < 3) || (r < 3 && c > 7) || (r > 7 && c < 3);
+          const bit = isFinder || ((r * 13 + c * 7 + seed) % 3 === 0);
+          if (bit) {
+            rects += `<rect x="${c * 10}" y="${r * 10}" width="8.5" height="8.5" rx="1.5" fill="#0f172a"/>`;
+          }
+        }
+      }
+      document.getElementById('qr-svg-container').innerHTML = `
+        <svg viewBox="0 0 110 110" class="w-full h-full">${rects}</svg>
+      `;
+      document.getElementById('qr-code-modal').classList.remove('hidden');
+      document.getElementById('qr-code-modal').classList.add('flex');
+    }
+
+    function closeQrModal() {
+      document.getElementById('qr-code-modal').classList.add('hidden');
+      document.getElementById('qr-code-modal').classList.remove('flex');
+    }
+
+    // -------------------------------------------------------------------------
+    // HELPER: BRANCH-ISOLATED DATA QUERIES
+    // -------------------------------------------------------------------------
+    function getBranchSubmissions(branchId = currentSession.branchId) {
+      return appState.submissions.filter(s => s.branchId === branchId);
+    }
+
+    function getBranchExpenses(branchId = currentSession.branchId) {
+      return appState.expenses.filter(e => e.branchId === branchId);
+    }
+
+    function getBranchActivities(branchId = currentSession.branchId) {
+      return appState.activities.filter(a => a.branchId === branchId);
+    }
+
+    function logActivity(branchId, user, action, target) {
+      const now = new Date();
+      const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      appState.activities.unshift({
+        id: `ACT-${Date.now().toString().slice(-5)}`,
+        branchId, user, action, target,
+        date: appState.todayStr,
+        time
+      });
+    }
+
+    function addNotification(branchId, type, title, msg) {
+      appState.notifications.unshift({
+        id: `NTF-${Date.now().toString().slice(-5)}`,
+        branchId, type, title, msg, time: 'Just now', unread: true
+      });
+    }
+
+    function statusBadgeHTML(status) {
+      const map = {
+        'Received': 'bg-slate-100 text-slate-700 border-slate-200',
+        'Processing': 'bg-amber-50 text-amber-700 border-amber-200',
+        'Ready for Printing': 'bg-cyan-50 text-cyan-700 border-cyan-200',
+        'Printing': 'bg-blue-50 text-blue-700 border-blue-200',
+        'Printed': 'bg-indigo-50 text-indigo-700 border-indigo-200',
+        'Ready for Collection': 'bg-purple-50 text-purple-700 border-purple-200',
+        'Collected': 'bg-emerald-50 text-emerald-700 border-emerald-200'
+      };
+      return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${map[status] || map['Received']}">
+        <span class="w-1.5 h-1.5 rounded-full bg-current"></span>${status}
+      </span>`;
+    }
+
+    // -------------------------------------------------------------------------
+    // VIEW 1: MANAGER & OPERATOR DASHBOARD OVERVIEW
+    // -------------------------------------------------------------------------
+    function renderDashboardView() {
+      const { branchId, role, user } = currentSession;
+      const branch = appState.branches[branchId];
+      const subs = getBranchSubmissions(branchId);
+      const todaySubs = subs.filter(s => s.date === appState.todayStr);
+      const pendingJobs = subs.filter(s => !['Printed', 'Ready for Collection', 'Collected'].includes(s.status));
+      const completedJobs = subs.filter(s => ['Printed', 'Ready for Collection', 'Collected'].includes(s.status));
+      const activeStaffCount = appState.staff.filter(s => s.branchId === branchId && s.active).length;
+
+      const todayIncome = todaySubs.reduce((sum, s) => sum + (Number(s.billing?.amountPaid) || 0), 0);
+      const monthlyIncome = subs.filter(s => s.month === 10).reduce((sum, s) => sum + (Number(s.billing?.amountPaid) || 0), 0);
+      const outstandingBalance = subs.reduce((sum, s) => sum + Math.max(0, (Number(s.billing?.totalAmount) || 0) - (Number(s.billing?.amountPaid) || 0)), 0);
+      const canSeeFinance = role === 'manager' || user.permissions?.viewFinance;
+
+      const dailyCode = branch.dailyCodes[appState.todayStr];
+
+      return `
+        <div class="space-y-6 animate-fade-in">
+          <!-- Top Hero Daily Code & Quick Folder Access Banner -->
+          <div class="rounded-3xl hero-gradient text-white p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 luxury-shadow relative overflow-hidden">
+            <div class="relative z-10 max-w-2xl">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-400/15 border border-cyan-400/30 text-cyan-300 text-xs font-bold mb-3">
+                <i class="fa-solid fa-building-shield"></i> Branch Code: <span class="font-mono">${branchId}</span>
+              </div>
+              <h3 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Welcome back, ${user.fullName}</h3>
+              <p class="text-slate-300 text-xs sm:text-sm mt-1.5 leading-relaxed">
+                All customer uploads for <strong class="text-white">Thursday, 19 November 2026</strong> are automatically routed into <strong class="text-cyan-300">November → Day 19</strong> using your branch's active daily submission code.
+              </p>
+              <div class="flex flex-wrap gap-3 mt-5">
+                <button onclick="openDirectDayFolder(10, 19)" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-lg shadow-blue-600/30 transition flex items-center gap-2">
+                  <i class="fa-solid fa-images"></i> Open Today's Gallery (Nov Day 19)
+                </button>
+                <button onclick="fileExplorer.level = 1; navigateTo('sent-files')" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/15 transition flex items-center gap-2">
+                  <i class="fa-solid fa-folder-open"></i> Browse 12 Monthly Covers
+                </button>
+              </div>
+            </div>
+
+            <!-- Daily Code Highlight Card -->
+            <div class="relative z-10 w-full lg:w-auto bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-5 min-w-[280px]">
+              <div class="flex items-center justify-between text-xs text-cyan-300 font-bold mb-1">
+                <span>SHARED DAILY CODE</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px]">ACTIVE TODAY</span>
+              </div>
+              <div class="font-mono text-3xl font-extrabold tracking-widest text-white my-2">${dailyCode}</div>
+              <p class="text-[11px] text-slate-300 mb-3">Share with all walk-in & remote senders today.</p>
+              <div class="flex gap-2">
+                <button onclick="copyDailyCode()" class="flex-1 py-2 rounded-xl bg-white text-navy-950 font-bold text-xs hover:bg-cyan-50 transition">
+                  <i class="fa-regular fa-copy mr-1"></i> Copy
+                </button>
+                <button onclick="openQrModal()" class="flex-1 py-2 rounded-xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-500 transition">
+                  <i class="fa-solid fa-qrcode mr-1"></i> QR Code
+                </button>
+                ${(role === 'manager' || user.permissions?.manageCodes) ? `
+                  <button onclick="regenerateDailyCode()" title="Regenerate Code" class="px-3 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold transition">
+                    <i class="fa-solid fa-rotate"></i>
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+
+          <!-- KPI Metrics Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 luxury-shadow relative overflow-hidden">
+              <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-400"></div>
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Total / Today Submissions</span>
+                <span class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><i class="fa-solid fa-file-arrow-up"></i></span>
+              </div>
+              <div class="mt-3 flex items-baseline gap-2">
+                <span class="text-2xl font-extrabold font-mono text-slate-900">${subs.length}</span>
+                <span class="text-xs font-bold text-emerald-600">+${todaySubs.length} today</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">${subs.reduce((a, s) => a + s.files.length, 0)} total cloud files stored</p>
+            </div>
+
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 luxury-shadow relative overflow-hidden">
+              <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-amber-500 to-orange-400"></div>
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Pending / Completed Jobs</span>
+                <span class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><i class="fa-solid fa-print"></i></span>
+              </div>
+              <div class="mt-3 flex items-baseline gap-2">
+                <span class="text-2xl font-extrabold font-mono text-slate-900">${pendingJobs.length}</span>
+                <span class="text-xs font-bold text-slate-500">pending</span>
+                <span class="text-xs font-bold text-emerald-600 ml-auto">${completedJobs.length} completed</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">${activeStaffCount} active branch staff</p>
+            </div>
+
+            ${canSeeFinance ? `
+              <div class="bg-white rounded-2xl p-5 border border-slate-200 luxury-shadow relative overflow-hidden">
+                <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-400"></div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Today's Income (GH₵)</span>
+                  <span class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><i class="fa-solid fa-cedi-sign"></i></span>
+                </div>
+                <div class="mt-3 text-2xl font-extrabold font-mono text-slate-900">GH₵ ${todayIncome.toFixed(2)}</div>
+                <p class="text-xs text-emerald-600 font-semibold mt-1">Nov Total: GH₵ ${monthlyIncome.toFixed(2)}</p>
+              </div>
+
+              <div class="bg-white rounded-2xl p-5 border border-slate-200 luxury-shadow relative overflow-hidden">
+                <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-rose-500 to-pink-500"></div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Outstanding Balances</span>
+                  <span class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center"><i class="fa-solid fa-hand-holding-dollar"></i></span>
+                </div>
+                <div class="mt-3 text-2xl font-extrabold font-mono text-rose-600">GH₵ ${outstandingBalance.toFixed(2)}</div>
+                <p class="text-xs text-slate-500 mt-1">Unpaid balances on active jobs</p>
+              </div>
+            ` : `
+              <div class="bg-white rounded-2xl p-5 border border-slate-200 luxury-shadow sm:col-span-2 flex items-center justify-between">
+                <div>
+                  <span class="text-[11px] font-extrabold uppercase tracking-wider text-blue-600">Operator Quick Access</span>
+                  <h4 class="text-base font-extrabold text-slate-900 mt-1">Ready for Production</h4>
+                  <p class="text-xs text-slate-500 mt-1">Click any submission below to preview files, update print status, or record job specs.</p>
+                </div>
+                <button onclick="navigateTo('printing-queue')" class="px-4 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold">Open Print Queue</button>
+              </div>
+            `}
+          </div>
+
+          <!-- Charts Row (Manager / Authorized Finance) -->
+          ${canSeeFinance ? `
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="bg-white rounded-2xl p-6 border border-slate-200 luxury-shadow">
+                <div class="flex items-center justify-between mb-4">
+                  <div>
+                    <h4 class="font-extrabold text-sm text-slate-900">Monthly Income Overview (GH₵)</h4>
+                    <p class="text-xs text-slate-500">Confirmed customer payments across Q3–Q4 2026</p>
+                  </div>
+                  <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg">2026 Fiscal</span>
+                </div>
+                <div class="h-44 flex items-end justify-between gap-3 pt-6 px-2 border-b border-slate-100">
+                  ${[
+                    { m: 'Jul', val: 1450, pct: 52 },
+                    { m: 'Aug', val: 1890, pct: 68 },
+                    { m: 'Sep', val: 2240, pct: 80 },
+                    { m: 'Oct', val: 1980, pct: 71 },
+                    { m: 'Nov', val: Math.max(monthlyIncome, 1690), pct: 88, active: true },
+                    { m: 'Dec', val: 650, pct: 25 }
+                  ].map(bar => `
+                    <div class="flex-1 flex flex-col items-center gap-2">
+                      <span class="text-[10px] font-mono font-bold text-slate-600">₵${Math.round(bar.val)}</span>
+                      <div class="w-full max-w-[42px] rounded-t-xl transition-all ${bar.active ? 'bg-gradient-to-t from-blue-600 to-cyan-400 shadow-md shadow-blue-500/25' : 'bg-slate-200 hover:bg-blue-300'}" style="height: ${bar.pct}%"></div>
+                      <span class="text-xs font-bold ${bar.active ? 'text-blue-600' : 'text-slate-500'}">${bar.m}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              <div class="bg-white rounded-2xl p-6 border border-slate-200 luxury-shadow">
+                <div class="flex items-center justify-between mb-4">
+                  <div>
+                    <h4 class="font-extrabold text-sm text-slate-900">Printing Service Performance</h4>
+                    <p class="text-xs text-slate-500">Distribution of printing press job categories</p>
+                  </div>
+                  <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg">${subs.length} Jobs</span>
+                </div>
+                <div class="space-y-3.5 mt-2">
+                  ${[
+                    { label: 'Colour Printing & Invitations', pct: 45, color: 'bg-blue-600' },
+                    { label: 'Large Format Banners & Vinyl', pct: 28, color: 'bg-cyan-500' },
+                    { label: 'Binding, Manuals & Academic', pct: 18, color: 'bg-indigo-600' },
+                    { label: 'Photocopying & Lamination', pct: 9, color: 'bg-emerald-500' }
+                  ].map(s => `
+                    <div>
+                      <div class="flex justify-between text-xs font-bold mb-1">
+                        <span class="text-slate-700">${s.label}</span>
+                        <span class="font-mono text-slate-900">${s.pct}%</span>
+                      </div>
+                      <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="${s.color} h-full rounded-full" style="width: ${s.pct}%"></div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Recent Submissions & Live Activity Feed -->
+          <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            <div class="xl:col-span-2 bg-white rounded-2xl border border-slate-200 luxury-shadow overflow-hidden">
+              <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                <h4 class="font-extrabold text-sm text-slate-900"><i class="fa-solid fa-clock text-blue-600 mr-2"></i>Recent Branch Submissions</h4>
+                <button onclick="navigateTo('printing-queue')" class="text-xs font-bold text-blue-600 hover:underline">View All Jobs →</button>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="bg-slate-900 text-white uppercase text-[10px] tracking-wider">
+                      <th class="py-3 px-4">Submission</th>
+                      <th class="py-3 px-4">Sender</th>
+                      <th class="py-3 px-4">Folder</th>
+                      <th class="py-3 px-4">Status</th>
+                      <th class="py-3 px-4 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100">
+                    ${subs.slice(0, 5).map(s => `
+                      <tr class="hover:bg-slate-50 transition">
+                        <td class="py-3.5 px-4">
+                          <div class="font-bold text-slate-900">${s.customName}</div>
+                          <div class="text-[11px] font-mono text-slate-400">${s.id} • ${s.files.length} file(s)</div>
+                        </td>
+                        <td class="py-3.5 px-4 font-semibold text-slate-700">${s.senderName}</td>
+                        <td class="py-3.5 px-4">
+                          <button onclick="openDirectDayFolder(${s.month}, ${s.day})" class="text-blue-600 font-bold hover:underline">
+                            ${MONTHS_DATA[s.month].name.slice(0,3)} Day ${s.day}
+                          </button>
+                        </td>
+                        <td class="py-3.5 px-4">${statusBadgeHTML(s.status)}</td>
+                        <td class="py-3.5 px-4 text-right">
+                          <button onclick="openSubmissionModal('${s.id}')" class="px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white font-bold transition">
+                            Manage
+                          </button>
+                        </td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Live Staff & System Activity Log -->
+            <div class="bg-white rounded-2xl border border-slate-200 luxury-shadow p-5">
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="font-extrabold text-sm text-slate-900"><i class="fa-solid fa-bolt text-cyan-500 mr-1.5"></i>Live Activity Feed</h4>
+                <button onclick="navigateTo('notifications')" class="text-[11px] font-bold text-blue-600 hover:underline">Full Log</button>
+              </div>
+              <div class="space-y-3.5">
+                ${getBranchActivities(branchId).slice(0, 5).map(act => `
+                  <div class="flex items-start gap-3 text-xs border-b border-slate-100 pb-3 last:border-0 last:pb-0">
+                    <div class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                      <i class="fa-solid fa-check text-[11px]"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <p class="font-bold text-slate-800 truncate">${act.user}</p>
+                      <p class="text-slate-600 leading-snug mt-0.5">${act.action}</p>
+                      <span class="text-[10px] font-mono text-slate-400 mt-1 block">${act.date} • ${act.time}</span>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // -------------------------------------------------------------------------
+    // VIEW 2: EXACT 4-LEVEL P&P-HUB FILE ORGANIZATION (SENT FILES MANAGEMENT)
+    // -------------------------------------------------------------------------
+    function openDirectDayFolder(monthIdx, dayNum) {
+      fileExplorer.selectedMonth = monthIdx;
+      fileExplorer.selectedDay = dayNum;
+      fileExplorer.level = 3;
+      navigateTo('sent-files');
+    }
+
+    function renderSentFilesView() {
+      const subs = getBranchSubmissions();
+
+      // Global Search Filter Check
+      if (fileExplorer.searchQuery.trim() !== '' || fileExplorer.statusFilter !== 'ALL') {
+        return renderGlobalFileSearchResults(subs);
+      }
+
+      if (fileExplorer.level === 1) {
+        return renderLevel1MonthsGrid(subs);
+      } else if (fileExplorer.level === 2) {
+        return renderLevel2DailyFolders(subs);
+      } else {
+        return renderLevel3DailyWhatsAppGallery(subs);
+      }
+    }
+
+    // Search Bar Header shared across Sent Files Management
+    function renderFileSearchHeader() {
+      return `
+        <div class="bg-white rounded-2xl p-4 border border-slate-200 luxury-shadow mb-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          <div class="relative flex-1">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+            <input type="text" value="${fileExplorer.searchQuery}"
+              oninput="fileExplorer.searchQuery = this.value; navigateTo('sent-files')"
+              placeholder="Search historical archives by submission name, file name, sender, ID, or date..."
+              class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:bg-white focus:border-blue-600 outline-none" />
+          </div>
+          <div class="flex items-center gap-2">
+            <select onchange="fileExplorer.statusFilter = this.value; navigateTo('sent-files')"
+              class="px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 outline-none">
+              <option value="ALL" ${fileExplorer.statusFilter === 'ALL' ? 'selected' : ''}>All Job Statuses</option>
+              ${JOB_STATUSES.map(st => `<option value="${st}" ${fileExplorer.statusFilter === st ? 'selected' : ''}>${st}</option>`).join('')}
+            </select>
+            ${(fileExplorer.searchQuery || fileExplorer.statusFilter !== 'ALL') ? `
+              <button onclick="fileExplorer.searchQuery=''; fileExplorer.statusFilter='ALL'; navigateTo('sent-files')"
+                class="px-3.5 py-2.5 rounded-xl bg-red-50 text-red-600 font-bold text-xs hover:bg-red-100">
+                Clear
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGlobalFileSearchResults(subs) {
+      const q = fileExplorer.searchQuery.toLowerCase();
+      const filtered = subs.filter(s => {
+        const matchesStatus = fileExplorer.statusFilter === 'ALL' || s.status === fileExplorer.statusFilter;
+        const matchesText = !q ||
+          s.customName.toLowerCase().includes(q) ||
+          s.senderName.toLowerCase().includes(q) ||
+          s.id.toLowerCase().includes(q) ||
+          s.date.includes(q) ||
+          MONTHS_DATA[s.month].name.toLowerCase().includes(q) ||
+          s.files.some(f => f.originalName.toLowerCase().includes(q));
+        return matchesStatus && matchesText;
+      });
+
+      return `
+        <div class="animate-fade-in">
+          ${renderFileSearchHeader()}
+          <div class="bg-white rounded-2xl border border-slate-200 luxury-shadow p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-extrabold text-base text-slate-900">Archive Search Results (${filtered.length})</h3>
+              <button onclick="fileExplorer.searchQuery=''; fileExplorer.statusFilter='ALL'; fileExplorer.level=1; navigateTo('sent-files')"
+                class="text-xs font-bold text-blue-600 hover:underline">← Back to 12 Monthly Covers</button>
+            </div>
+            ${filtered.length === 0 ? `
+              <div class="text-center py-12 text-slate-400">
+                <i class="fa-solid fa-folder-open text-4xl mb-3"></i>
+                <p class="text-sm font-bold">No matching archived submissions found in this branch.</p>
+              </div>
+            ` : `
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                ${filtered.map(s => `
+                  <div class="border border-slate-200 rounded-2xl p-4 hover:border-blue-400 transition bg-slate-50/60">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="font-mono text-[11px] font-bold text-blue-600">${s.id}</span>
+                      ${statusBadgeHTML(s.status)}
+                    </div>
+                    <h4 class="font-extrabold text-sm text-slate-900 mb-1">${s.customName}</h4>
+                    <p class="text-xs text-slate-600 mb-2">Sender: <strong>${s.senderName}</strong></p>
+                    <p class="text-[11px] text-slate-500 mb-3">
+                      <i class="fa-regular fa-calendar mr-1"></i> ${MONTHS_DATA[s.month].name} Day ${s.day}, 2026 (${s.time}) • ${s.files.length} file(s)
+                    </p>
+                    <div class="flex gap-2">
+                      <button onclick="openDirectDayFolder(${s.month}, ${s.day})" class="flex-1 py-2 rounded-xl bg-white border border-slate-200 hover:border-blue-500 text-xs font-bold text-slate-800">
+                        Open Day Folder
+                      </button>
+                      <button onclick="openSubmissionModal('${s.id}')" class="flex-1 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold hover:bg-blue-700">
+                        Details & Print
+                      </button>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    // LEVEL 1: SENT FILES MANAGEMENT (12 MONTHLY COVER TILES)
+    function renderLevel1MonthsGrid(subs) {
+      return `
+        <div class="animate-fade-in">
+          ${renderFileSearchHeader()}
+
+          <!-- P&P-HUB Slide 1 Banner -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
+            <div>
+              <span class="text-[11px] font-extrabold uppercase tracking-widest text-blue-600">P&P-HUB ARCHIVE HIERARCHY • LEVEL 1</span>
+              <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900">SENT FILES MANAGEMENT — 2026</h3>
+            </div>
+            <span class="text-xs font-semibold text-slate-500 bg-white px-3.5 py-2 rounded-xl border border-slate-200">
+              Select a month cover to open its daily folders
+            </span>
+          </div>
+
+          <!-- 12 Monthly Cover Cards Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            ${MONTHS_DATA.map(m => {
+              const monthSubs = subs.filter(s => s.month === m.index);
+              const totalFiles = monthSubs.reduce((sum, s) => sum + s.files.length, 0);
+              const completed = monthSubs.filter(s => ['Printed', 'Ready for Collection', 'Collected'].includes(s.status)).length;
+              const pending = monthSubs.length - completed;
+
+              return `
+                <div onclick="fileExplorer.selectedMonth=${m.index}; fileExplorer.level=2; navigateTo('sent-files')"
+                  class="group relative h-64 rounded-3xl overflow-hidden cursor-pointer border border-slate-200 luxury-shadow hover:-translate-y-1.5 transition-all duration-300 bg-navy-900">
+                  <!-- Cover Picture with Gradient Fallback -->
+                  <img src="${m.img}" alt="${m.name} Cover"
+                    onerror="this.style.display='none'"
+                    class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-75" />
+                  <div class="absolute inset-0 bg-gradient-to-br ${m.theme} opacity-55 mix-blend-multiply"></div>
+                  <div class="absolute inset-0 month-card-overlay"></div>
+
+                  <!-- Top Badges -->
+                  <div class="relative z-10 p-5 flex items-center justify-between">
+                    <span class="w-10 h-10 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center text-cyan-300">
+                      <i class="fa-solid ${m.icon}"></i>
+                    </span>
+                    <span class="px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/15 text-[11px] font-mono font-bold text-white">
+                      ${m.days} DAYS
+                    </span>
+                  </div>
+
+                  <!-- Month Title & Metrics -->
+                  <div class="absolute bottom-0 inset-x-0 p-5 z-10 text-white">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-cyan-300 mb-0.5">${m.tagline}</p>
+                    <h4 class="text-2xl font-extrabold tracking-tight uppercase">${m.name}</h4>
+
+                    <div class="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-white/15 text-[11px]">
+                      <div>
+                        <span class="text-slate-300 block">Files / Submissions</span>
+                        <span class="font-mono font-extrabold text-white">${totalFiles} files • ${monthSubs.length} subs</span>
+                      </div>
+                      <div class="text-right">
+                        <span class="text-emerald-300 font-bold block">${completed} Completed</span>
+                        <span class="text-amber-300 font-bold block">${pending} Pending</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // LEVEL 2: MONTHLY DAILY FOLDERS (DAY 1 TO DAY 28/29/30/31)
+    function renderLevel2DailyFolders(subs) {
+      const m = MONTHS_DATA[fileExplorer.selectedMonth];
+      const year = appState.currentYear;
+      const isLeap = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+      const totalDays = m.index === 1 ? (isLeap ? 29 : 28) : m.days;
+      const branch = appState.branches[currentSession.branchId];
+
+      let daysHTML = '';
+      for (let d = 1; d <= totalDays; d++) {
+        const dateStr = `${year}-${String(m.index + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const daySubs = subs.filter(s => s.month === m.index && s.day === d);
+        const dayFilesCount = daySubs.reduce((sum, s) => sum + s.files.length, 0);
+        const isToday = dateStr === appState.todayStr;
+        const dayCode = branch.dailyCodes[dateStr] || (daySubs[0]?.dailyCode) || `PPH-${((m.index + 1) * 317 + d * 91) % 8999 + 1000}`;
+        const hasActivity = daySubs.length > 0;
+
+        daysHTML += `
+          <div onclick="fileExplorer.selectedDay=${d}; fileExplorer.level=3; navigateTo('sent-files')"
+            class="group cursor-pointer rounded-2xl p-4 border transition-all duration-200 hover:-translate-y-1 ${
+              isToday
+                ? 'bg-gradient-to-br from-blue-600 to-navy-900 text-white border-cyan-400 luxury-glow'
+                : hasActivity
+                  ? 'bg-white border-blue-200 hover:border-blue-500 luxury-shadow'
+                  : 'bg-white border-slate-200/80 hover:border-blue-400 opacity-85 hover:opacity-100'
+            }">
+            <div class="flex items-center justify-between mb-3">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg ${
+                isToday ? 'bg-white/15 text-cyan-300' : hasActivity ? 'bg-blue-50 text-blue-600' : 'bg-slate-100 text-slate-400'
+              }">
+                <i class="fa-solid fa-folder-closed group-hover:hidden"></i>
+                <i class="fa-solid fa-folder-open hidden group-hover:inline"></i>
+              </div>
+              ${hasActivity ? `
+                <span class="flex items-center gap-1.5 text-[10px] font-extrabold px-2 py-0.5 rounded-full ${
+                  isToday ? 'bg-emerald-400/20 text-emerald-300' : 'bg-emerald-50 text-emerald-700'
+                }">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-indicator"></span> Active
+                </span>
+              ` : `<span class="text-[10px] font-semibold ${isToday ? 'text-cyan-200' : 'text-slate-400'}">Empty</span>`}
+            </div>
+
+            <div class="font-extrabold text-base tracking-tight ${isToday ? 'text-white' : 'text-slate-900'}">DAY ${d}</div>
+            <div class="text-[11px] font-medium ${isToday ? 'text-cyan-200' : 'text-slate-500'}">${d} ${m.name.slice(0, 3)} ${year}</div>
+
+            <div class="mt-3 pt-2.5 border-t ${isToday ? 'border-white/15' : 'border-slate-100'} space-y-1">
+              <div class="flex items-center justify-between text-[10px]">
+                <span class="${isToday ? 'text-slate-300' : 'text-slate-400'}">Daily Code:</span>
+                <span class="font-mono font-bold ${isToday ? 'text-cyan-300' : 'text-blue-600'}">${dayCode}</span>
+              </div>
+              <div class="flex items-center justify-between text-[11px] font-bold">
+                <span class="${isToday ? 'text-white' : 'text-slate-700'}">${daySubs.length} Subs</span>
+                <span class="${isToday ? 'text-cyan-300' : 'text-slate-500'}">${dayFilesCount} Files</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="animate-fade-in">
+          ${renderFileSearchHeader()}
+
+          <!-- Breadcrumb & Month Header -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 luxury-shadow mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2 text-xs font-bold text-slate-500 mb-1">
+                <button onclick="fileExplorer.level=1; navigateTo('sent-files')" class="text-blue-600 hover:underline flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-left"></i> SENT FILES MANAGEMENT
+                </button>
+                <span>/</span>
+                <span class="uppercase text-slate-800">${m.name} FILES</span>
+              </div>
+              <h3 class="text-2xl font-extrabold text-slate-900 uppercase">${m.name} FILES (${totalDays} DAILY FOLDERS)</h3>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="fileExplorer.level=1; navigateTo('sent-files')" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition">
+                <i class="fa-solid fa-grip mr-1"></i> All 12 Months
+              </button>
+            </div>
+          </div>
+
+          <!-- Daily Folders Grid (Slide 2 of P&P-HUB) -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3.5">
+            ${daysHTML}
+          </div>
+        </div>
+      `;
+    }
+
+    // LEVEL 3: DAILY FILE GALLERY (WHATSAPP-STYLE MEDIA & DOCUMENT GALLERY)
+    function renderLevel3DailyWhatsAppGallery(subs) {
+      const m = MONTHS_DATA[fileExplorer.selectedMonth];
+      const d = fileExplorer.selectedDay;
+      const year = appState.currentYear;
+      const dateStr = `${year}-${String(m.index + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      const branch = appState.branches[currentSession.branchId];
+      const daySubs = subs.filter(s => s.month === m.index && s.day === d);
+      const dayCode = branch.dailyCodes[dateStr] || (daySubs[0]?.dailyCode) || 'HISTORICAL';
+      const canDelete = currentSession.role === 'manager' || currentSession.user?.permissions?.deleteFiles;
+
+      return `
+        <div class="animate-fade-in">
+          <!-- Breadcrumb & Day Summary Header -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 luxury-shadow mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div>
+              <div class="flex flex-wrap items-center gap-2 text-xs font-bold text-slate-500 mb-1">
+                <button onclick="fileExplorer.level=1; navigateTo('sent-files')" class="text-blue-600 hover:underline">SENT FILES</button>
+                <span>/</span>
+                <button onclick="fileExplorer.level=2; navigateTo('sent-files')" class="text-blue-600 hover:underline uppercase">${m.name} FILES</button>
+                <span>/</span>
+                <span class="text-slate-900">DAY ${d}</span>
+              </div>
+              <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900">
+                ${m.name} — DAY ${d}, ${year} Gallery
+              </h3>
+              <p class="text-xs text-slate-500 mt-0.5">
+                Daily Submission Code Reference: <span class="font-mono font-bold text-blue-600">${dayCode}</span> • ${daySubs.length} Submission(s)
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="fileExplorer.level=2; navigateTo('sent-files')" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition">
+                ← Back to ${m.name} Days
+              </button>
+            </div>
+          </div>
+
+          <!-- WhatsApp-Style Media & Document Gallery Container -->
+          <div class="whatsapp-wallpaper rounded-3xl p-4 sm:p-6 lg:p-8 border border-slate-200 min-h-[460px]">
+            ${daySubs.length === 0 ? `
+              <div class="bg-white/95 backdrop-blur rounded-3xl p-12 text-center max-w-md mx-auto my-10 shadow-sm border border-slate-200">
+                <div class="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto text-2xl mb-4">
+                  <i class="fa-regular fa-folder-open"></i>
+                </div>
+                <h4 class="text-lg font-extrabold text-slate-900">No Files Submitted on Day ${d}</h4>
+                <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                  No customers uploaded documents to ${branch.name} on ${d} ${m.name} ${year}.
+                </p>
+              </div>
+            ` : `
+              <div class="space-y-6">
+                ${daySubs.map(sub => `
+                  <!-- WhatsApp-Style Sender Submission Bubble Card -->
+                  <div class="bg-white rounded-3xl shadow-md border border-slate-200/90 overflow-hidden max-w-5xl">
+                    <!-- Bubble Top Sender Header -->
+                    <div class="px-5 py-3.5 bg-slate-900 text-white flex flex-wrap items-center justify-between gap-3">
+                      <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center font-extrabold text-xs">
+                          ${sub.senderName.substring(0, 2).toUpperCase()}
+                        </div>
+                        <div>
+                          <div class="flex items-center gap-2">
+                            <span class="font-extrabold text-sm text-white">${sub.customName}</span>
+                            <span class="text-[10px] font-mono bg-white/15 px-2 py-0.5 rounded text-cyan-300">${sub.id}</span>
+                          </div>
+                          <p class="text-[11px] text-slate-300">
+                            Sender: <strong>${sub.senderName}</strong> (${sub.senderId}) • <i class="fa-regular fa-clock"></i> ${sub.time}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div class="flex items-center gap-2">
+                        ${statusBadgeHTML(sub.status)}
+                        <button onclick="openSubmissionModal('${sub.id}')" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition">
+                          <i class="fa-solid fa-sliders mr-1"></i> Operations & Billing
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- WhatsApp Media Tiles Grid -->
+                    <div class="p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 bg-[#f7f9fc]">
+                      ${sub.files.map(file => {
+                        const isImg = file.type === 'image';
+                        const isPdf = file.type === 'pdf';
+                        return `
+                          <div class="group bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md hover:border-blue-400 transition flex flex-col">
+                            <!-- Media Thumbnail Area -->
+                            <div onclick="openFileLightbox('${sub.id}', '${file.fileId}')" class="relative h-44 bg-slate-100 cursor-pointer overflow-hidden flex items-center justify-center">
+                              ${isImg && file.previewUrl ? `
+                                <img src="${file.previewUrl}" alt="${file.originalName}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition flex items-center justify-center">
+                                  <span class="opacity-0 group-hover:opacity-100 bg-black/75 text-white text-xs font-bold px-3 py-1.5 rounded-full transition">
+                                    <i class="fa-solid fa-expand mr-1"></i> View Full Image
+                                  </span>
+                                </div>
+                              ` : `
+                                <div class="p-5 text-center w-full h-full flex flex-col items-center justify-center ${isPdf ? 'bg-red-50/70' : 'bg-blue-50/70'}">
+                                  <div class="w-14 h-14 rounded-2xl ${isPdf ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'} flex items-center justify-center text-2xl mb-2 shadow-sm">
+                                    <i class="fa-solid ${isPdf ? 'fa-file-pdf' : 'fa-file-word'}"></i>
+                                  </div>
+                                  <span class="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${isPdf ? 'bg-red-600 text-white' : 'bg-blue-600 text-white'}">
+                                    ${file.ext} DOCUMENT
+                                  </span>
+                                  <p class="text-[11px] text-slate-600 mt-2 line-clamp-2 px-2">${file.pagesPreview || 'Ready for press preview'}</p>
+                                </div>
+                              `}
+                              <span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-navy-900/80 backdrop-blur text-white font-mono text-[10px] font-bold">
+                                ${file.ext} • ${file.size}
+                              </span>
+                            </div>
+
+                            <!-- File Metadata & Quick Actions -->
+                            <div class="p-3.5 flex-1 flex flex-col justify-between">
+                              <div>
+                                <p class="font-bold text-xs text-slate-900 truncate" title="${file.originalName}">${file.originalName}</p>
+                                <p class="text-[11px] text-slate-500 mt-0.5">${sub.date} • ${sub.time}</p>
+                              </div>
+                              <div class="flex items-center gap-1.5 mt-3 pt-2.5 border-t border-slate-100">
+                                <button onclick="openFileLightbox('${sub.id}', '${file.fileId}')" class="flex-1 py-1.5 rounded-lg bg-slate-100 hover:bg-blue-600 text-slate-700 hover:text-white text-[11px] font-bold transition">
+                                  <i class="fa-solid fa-eye mr-1"></i> Preview
+                                </button>
+                                <button onclick="downloadSpecificFile('${file.originalName}')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold transition" title="Download">
+                                  <i class="fa-solid fa-download"></i>
+                                </button>
+                                <button onclick="printSpecificFile('${sub.id}', '${file.originalName}')" class="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white text-[11px] font-bold transition" title="Print File">
+                                  <i class="fa-solid fa-print"></i>
+                                </button>
+                                ${canDelete ? `
+                                  <button onclick="deleteFileFromSubmission('${sub.id}', '${file.fileId}')" class="px-2.5 py-1.5 rounded-lg bg-red-50 hover:bg-red-600 text-red-600 hover:text-white text-[11px] font-bold transition" title="Delete File">
+                                    <i class="fa-solid fa-trash"></i>
+                                  </button>
+                                ` : ''}
+                              </div>
+                            </div>
+                          </div>
+                        `;
+                      }).join('')}
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    // -------------------------------------------------------------------------
+    // LEVEL 4: SUBMISSION DETAILS, PRINTING STATUS & BILLING MODAL
+    // -------------------------------------------------------------------------
+    function openSubmissionModal(subId) {
+      const sub = appState.submissions.find(s => s.id === subId);
+      if (!sub) return;
+
+      const { role, user } = currentSession;
+      const canEditStatus = role === 'manager' || user.permissions?.updateStatus;
+      const canEditBilling = role === 'manager' || user.permissions?.recordBilling;
+      const balance = Math.max(0, (sub.billing.totalAmount || 0) - (sub.billing.amountPaid || 0));
+
+      document.getElementById('modal-sub-custom-name').innerText = sub.customName;
+      document.getElementById('modal-sub-meta').innerText = `${sub.id} • Branch: ${sub.branchId} • Daily Code: ${sub.dailyCode}`;
+
+      document.getElementById('modal-sub-body').innerHTML = `
+        <!-- Top Metadata Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Sender Details</span>
+            <p class="font-extrabold text-sm text-slate-900 mt-1">${sub.senderName}</p>
+            <p class="text-xs font-mono text-blue-600">${sub.senderId}</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Archive Location</span>
+            <p class="font-extrabold text-sm text-slate-900 mt-1">${MONTHS_DATA[sub.month].name} Day ${sub.day}, ${sub.year}</p>
+            <p class="text-xs text-slate-500">${sub.date} at ${sub.time}</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Current Job Status</span>
+            <div class="mt-1.5">${statusBadgeHTML(sub.status)}</div>
+            <p class="text-[11px] text-slate-500 mt-1">Handler: <strong>${sub.assignedTo || 'Unassigned'}</strong></p>
+          </div>
+        </div>
+
+        <!-- Uploaded Files List -->
+        <div>
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-2.5">Submitted Cloud Files (${sub.files.length})</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            ${sub.files.map(f => `
+              <div class="flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-white">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                    <i class="fa-solid ${f.type === 'image' ? 'fa-image' : f.type === 'pdf' ? 'fa-file-pdf' : 'fa-file-word'}"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <p class="text-xs font-bold text-slate-900 truncate">${f.originalName}</p>
+                    <p class="text-[10px] font-mono text-slate-500">${f.ext} • ${f.size}</p>
+                  </div>
+                </div>
+                <div class="flex gap-1.5 shrink-0">
+                  <button onclick="openFileLightbox('${sub.id}', '${f.fileId}')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-blue-600 text-slate-700 hover:text-white text-xs font-bold transition">Preview</button>
+                  <button onclick="printSpecificFile('${sub.id}', '${f.originalName}')" class="px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white text-xs font-bold transition"><i class="fa-solid fa-print"></i></button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Printing Workflow & Financial Billing Form -->
+        <form onsubmit="saveSubmissionOperations(event, '${sub.id}')" class="border-t border-slate-200 pt-5 space-y-5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <!-- Status Workflow -->
+            <div class="p-4 rounded-2xl bg-blue-50/60 border border-blue-100 space-y-3">
+              <h4 class="text-xs font-extrabold uppercase tracking-wider text-blue-800"><i class="fa-solid fa-list-check mr-1"></i> 1. Printing Workflow Status</h4>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Update Job Status</label>
+                <select id="op-status-select" ${!canEditStatus ? 'disabled' : ''}
+                  class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-900 outline-none">
+                  ${JOB_STATUSES.map(st => `<option value="${st}" ${sub.status === st ? 'selected' : ''}>${st}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Printing Service Type</label>
+                <select id="op-service-select" ${!canEditStatus ? 'disabled' : ''}
+                  class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-900 outline-none">
+                  ${SERVICE_TYPES.map(sv => `<option value="${sv}" ${sub.billing.serviceType === sv ? 'selected' : ''}>${sv}</option>`).join('')}
+                </select>
+              </div>
+            </div>
+
+            <!-- Print Quantities & Financial Charges (GH₵) -->
+            <div class="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-100 space-y-3">
+              <h4 class="text-xs font-extrabold uppercase tracking-wider text-emerald-800"><i class="fa-solid fa-cedi-sign mr-1"></i> 2. Print Specs & Financial Record (GH₵)</h4>
+              <div class="grid grid-cols-3 gap-2.5">
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">Copies</label>
+                  <input type="number" id="op-copies" value="${sub.billing.copies}" min="1" oninput="recalcModalBilling()" ${!canEditBilling ? 'disabled' : ''}
+                    class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-mono font-bold" />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">Pages</label>
+                  <input type="number" id="op-pages" value="${sub.billing.pages}" min="1" ${!canEditBilling ? 'disabled' : ''}
+                    class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-mono font-bold" />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">Unit Price (₵)</label>
+                  <input type="number" step="0.01" id="op-unit-price" value="${sub.billing.unitPrice}" min="0" oninput="recalcModalBilling()" ${!canEditBilling ? 'disabled' : ''}
+                    class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-mono font-bold" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-3 gap-2.5">
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">Total (GH₵)</label>
+                  <input type="number" step="0.01" id="op-total-amt" value="${sub.billing.totalAmount.toFixed(2)}" oninput="recalcModalBalanceOnly()" ${!canEditBilling ? 'disabled' : ''}
+                    class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-mono font-extrabold text-slate-900" />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">Amount Paid (₵)</label>
+                  <input type="number" step="0.01" id="op-paid-amt" value="${sub.billing.amountPaid.toFixed(2)}" min="0" oninput="recalcModalBalanceOnly()" ${!canEditBilling ? 'disabled' : ''}
+                    class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-mono font-extrabold text-emerald-700" />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">Payment Method</label>
+                  <select id="op-pay-method" ${!canEditBilling ? 'disabled' : ''}
+                    class="w-full px-2.5 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold">
+                    ${['Cash', 'MoMo', 'Bank Transfer', 'Unpaid'].map(pm => `<option value="${pm}" ${sub.billing.paymentMethod === pm ? 'selected' : ''}>${pm}</option>`).join('')}
+                  </select>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between pt-1 text-xs">
+                <span class="font-bold text-slate-600">Outstanding Balance:</span>
+                <span id="op-balance-display" class="font-mono font-extrabold text-sm ${balance > 0 ? 'text-rose-600' : 'text-emerald-600'}">GH₵ ${balance.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-3">
+            <button type="button" onclick="closeSubmissionModal()" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold">
+              Cancel
+            </button>
+            <button type="submit" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-lg shadow-blue-600/25">
+              <i class="fa-solid fa-floppy-disk mr-1"></i> Save Status & Financial Record
+            </button>
+          </div>
+        </form>
+      `;
+
+      document.getElementById('submission-detail-modal').classList.remove('hidden');
+      document.getElementById('submission-detail-modal').classList.add('flex');
+    }
+
+    function recalcModalBilling() {
+      const copies = parseFloat(document.getElementById('op-copies').value) || 0;
+      const unit = parseFloat(document.getElementById('op-unit-price').value) || 0;
+      const total = copies * unit;
+      document.getElementById('op-total-amt').value = total.toFixed(2);
+      recalcModalBalanceOnly();
+    }
+
+    function recalcModalBalanceOnly() {
+      const total = parseFloat(document.getElementById('op-total-amt').value) || 0;
+      const paid = parseFloat(document.getElementById('op-paid-amt').value) || 0;
+      const bal = Math.max(0, total - paid);
+      const disp = document.getElementById('op-balance-display');
+      disp.innerText = `GH₵ ${bal.toFixed(2)}`;
+      disp.className = `font-mono font-extrabold text-sm ${bal > 0 ? 'text-rose-600' : 'text-emerald-600'}`;
+    }
+
+    function saveSubmissionOperations(e, subId) {
+      e.preventDefault();
+      const sub = appState.submissions.find(s => s.id === subId);
+      if (!sub) return;
+
+      const oldStatus = sub.status;
+      const newStatus = document.getElementById('op-status-select').value;
+      sub.status = newStatus;
+      sub.assignedTo = currentSession.user.fullName;
+      sub.billing.serviceType = document.getElementById('op-service-select').value;
+      sub.billing.copies = parseInt(document.getElementById('op-copies').value) || 1;
+      sub.billing.pages = parseInt(document.getElementById('op-pages').value) || 1;
+      sub.billing.unitPrice = parseFloat(document.getElementById('op-unit-price').value) || 0;
+      sub.billing.totalAmount = parseFloat(document.getElementById('op-total-amt').value) || 0;
+      sub.billing.amountPaid = parseFloat(document.getElementById('op-paid-amt').value) || 0;
+      sub.billing.paymentMethod = document.getElementById('op-pay-method').value;
+      sub.billing.paymentDate = appState.todayStr;
+
+      logActivity(
+        currentSession.branchId,
+        currentSession.user.fullName,
+        `Updated ${sub.id} status (${oldStatus} → ${newStatus}) & billing (Paid GH₵ ${sub.billing.amountPaid.toFixed(2)})`,
+        sub.id
+      );
+
+      if (newStatus === 'Printed' || newStatus === 'Ready for Collection') {
+        addNotification(currentSession.branchId, 'job', `Job ${newStatus}`, `${sub.customName} for ${sub.senderName} is now ${newStatus}.`);
+      }
+
+      saveState();
+      closeSubmissionModal();
+      showToast(`Saved job updates for ${sub.id}`, 'success');
+      navigateTo(activeRoute);
+    }
+
+    function closeSubmissionModal() {
+      document.getElementById('submission-detail-modal').classList.add('hidden');
+      document.getElementById('submission-detail-modal').classList.remove('flex');
+    }
+
+    // -------------------------------------------------------------------------
+    // WHATSAPP-STYLE LIGHTBOX PREVIEW, DOWNLOAD, PRINT & DELETE
+    // -------------------------------------------------------------------------
+    function openFileLightbox(subId, fileId) {
+      const sub = appState.submissions.find(s => s.id === subId);
+      const file = sub?.files.find(f => f.fileId === fileId);
+      if (!file) return;
+
+      activeLightboxFile = { sub, file };
+      document.getElementById('lightbox-filename').innerText = file.originalName;
+      document.getElementById('lightbox-subtext').innerText = `Submission: ${sub.customName} • Sender: ${sub.senderName} • ${sub.date} ${sub.time} • ${file.size}`;
+      document.getElementById('lightbox-icon').className = `fa-solid ${file.type === 'image' ? 'fa-image' : file.type === 'pdf' ? 'fa-file-pdf' : 'fa-file-word'} text-cyan-400 text-lg`;
+
+      const canvas = document.getElementById('lightbox-canvas');
+      if (file.type === 'image' && file.previewUrl) {
+        canvas.innerHTML = `
+          <img src="${file.previewUrl}" alt="${file.originalName}" class="max-h-[78vh] max-w-full rounded-2xl shadow-2xl border border-white/15 object-contain" />
+        `;
+      } else {
+        canvas.innerHTML = `
+          <div class="bg-white rounded-2xl max-w-2xl w-full p-8 sm:p-12 shadow-2xl text-slate-900 space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl ${file.type === 'pdf' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'} flex items-center justify-center text-2xl">
+                  <i class="fa-solid ${file.type === 'pdf' ? 'fa-file-pdf' : 'fa-file-word'}"></i>
+                </div>
+                <div>
+                  <h4 class="font-extrabold text-base">${file.originalName}</h4>
+                  <p class="text-xs text-slate-500">${file.ext} Document • ${file.size} • Cloud Verified</p>
+                </div>
+              </div>
+              <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold">Print-Ready</span>
+            </div>
+            <div class="p-6 rounded-xl bg-slate-50 border border-slate-200 min-h-[240px] flex flex-col justify-between">
+              <div>
+                <p class="text-xs font-extrabold uppercase tracking-wider text-blue-600 mb-2">Document Content Summary</p>
+                <p class="text-sm font-semibold text-slate-800 leading-relaxed">${file.pagesPreview || 'High-resolution print-ready document submitted via P&P-HUB Cloud.'}</p>
+              </div>
+              <div class="border-t border-slate-200 pt-3 mt-6 flex justify-between text-[11px] text-slate-500 font-mono">
+                <span>JOB: ${sub.id}</span>
+                <span>SENDER: ${sub.senderName}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      document.getElementById('file-lightbox-modal').classList.remove('hidden');
+      document.getElementById('file-lightbox-modal').classList.add('flex');
+    }
+
+    function closeLightbox() {
+      document.getElementById('file-lightbox-modal').classList.add('hidden');
+      document.getElementById('file-lightbox-modal').classList.remove('flex');
+    }
+
+    function triggerSimulatedDownload() {
+      if (!activeLightboxFile) return;
+      downloadSpecificFile(activeLightboxFile.file.originalName);
+    }
+
+    function triggerSimulatedPrint() {
+      if (!activeLightboxFile) return;
+      printSpecificFile(activeLightboxFile.sub.id, activeLightboxFile.file.originalName);
+    }
+
+    function downloadSpecificFile(filename) {
+      showToast(`Downloading "${filename}" from secure cloud storage...`, 'info');
+    }
+
+    function printSpecificFile(subId, filename) {
+      const sub = appState.submissions.find(s => s.id === subId);
+      if (sub && sub.status === 'Received') {
+        sub.status = 'Printing';
+      }
+      logActivity(currentSession.branchId, currentSession.user.fullName, `Sent "${filename}" to press printer`, subId);
+      saveState();
+      showToast(`Print spooler started for "${filename}"!`, 'success');
+      if (activeRoute === 'sent-files' || activeRoute === 'printing-queue') navigateTo(activeRoute);
+    }
+
+    function deleteFileFromSubmission(subId, fileId) {
+      const sub = appState.submissions.find(s => s.id === subId);
+      if (!sub) return;
+      sub.files = sub.files.filter(f => f.fileId !== fileId);
+      if (sub.files.length === 0) {
+        appState.submissions = appState.submissions.filter(s => s.id !== subId);
+      }
+      logActivity(currentSession.branchId, currentSession.user.fullName, `Deleted cloud file ${fileId} from ${subId}`, subId);
+      saveState();
+      showToast('File removed from branch archive.', 'info');
+      navigateTo('sent-files');
+    }
+
+    // -------------------------------------------------------------------------
+    // VIEW 3: DAILY SUBMISSION CODES MANAGEMENT
+    // -------------------------------------------------------------------------
+    function renderDailyCodesView() {
+      const branch = appState.branches[currentSession.branchId];
+      const todayCode = branch.dailyCodes[appState.todayStr];
+      const canManage = currentSession.role === 'manager' || currentSession.user?.permissions?.manageCodes;
+      const historyEntries = Object.entries(branch.dailyCodes).sort((a, b) => b[0].localeCompare(a[0]));
+
+      return `
+        <div class="space-y-6 animate-fade-in">
+          <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 luxury-shadow flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+            <div class="max-w-xl">
+              <span class="text-[11px] font-extrabold uppercase tracking-widest text-blue-600">SHARED DAILY SECURITY TOKEN</span>
+              <h3 class="text-2xl font-extrabold text-slate-900 mt-1">${branch.name} — Active Code</h3>
+              <p class="text-xs sm:text-sm text-slate-500 mt-2 leading-relaxed">
+                All customers submitting files to <strong>${branch.name}</strong> on <strong>19 November 2026</strong> share this single daily code. It expires automatically at midnight without affecting historical files.
+              </p>
+              <div class="flex flex-wrap gap-3 mt-5">
+                <button onclick="copyDailyCode()" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-lg shadow-blue-600/20 transition">
+                  <i class="fa-regular fa-copy mr-1.5"></i> Copy Code
+                </button>
+                <button onclick="openQrModal()" class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition">
+                  <i class="fa-solid fa-qrcode mr-1.5"></i> Display QR Code
+                </button>
+                ${canManage ? `
+                  <button onclick="regenerateDailyCode()" class="px-5 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold transition">
+                    <i class="fa-solid fa-rotate mr-1.5"></i> Regenerate Code
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+
+            <div class="w-full lg:w-auto bg-navy-900 text-white rounded-3xl p-6 text-center min-w-[280px] border border-cyan-400/30 luxury-glow">
+              <span class="text-[10px] font-extrabold uppercase tracking-widest text-cyan-400">19 NOVEMBER 2026</span>
+              <div class="font-mono text-4xl font-extrabold tracking-widest my-3 text-white">${todayCode}</div>
+              <span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-indicator"></span> Valid for New Uploads
+              </span>
+            </div>
+          </div>
+
+          <!-- Historical Daily Codes Archive -->
+          <div class="bg-white rounded-2xl border border-slate-200 luxury-shadow overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100">
+              <h4 class="font-extrabold text-sm text-slate-900">Historical Daily Codes Archive</h4>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-slate-900 text-white uppercase text-[10px] tracking-wider">
+                    <th class="py-3.5 px-5">Calendar Date</th>
+                    <th class="py-3.5 px-5">Daily Submission Code</th>
+                    <th class="py-3.5 px-5">Status</th>
+                    <th class="py-3.5 px-5">Submissions Linked</th>
+                    <th class="py-3.5 px-5 text-right">Archive Folder</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  ${historyEntries.map(([dt, code]) => {
+                    const isToday = dt === appState.todayStr;
+                    const linkedCount = getBranchSubmissions().filter(s => s.date === dt).length;
+                    const parts = dt.split('-');
+                    const mIdx = parseInt(parts[1], 10) - 1;
+                    const dNum = parseInt(parts[2], 10);
+                    return `
+                      <tr class="hover:bg-slate-50">
+                        <td class="py-3.5 px-5 font-bold text-slate-900">${dt}</td>
+                        <td class="py-3.5 px-5 font-mono font-extrabold text-blue-600">${code}</td>
+                        <td class="py-3.5 px-5">
+                          ${isToday
+                            ? '<span class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[11px]">Active Today</span>'
+                            : '<span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500 font-bold text-[11px]">Expired (Files Preserved)</span>'}
+                        </td>
+                        <td class="py-3.5 px-5 font-semibold text-slate-700">${linkedCount} submission(s)</td>
+                        <td class="py-3.5 px-5 text-right">
+                          <button onclick="openDirectDayFolder(${mIdx}, ${dNum})" class="text-blue-600 font-bold hover:underline">
+                            Open Day ${dNum} Folder →
+                          </button>
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // -------------------------------------------------------------------------
+    // VIEW 4: PRINTING QUEUE & PRINTING HISTORY
+    // -------------------------------------------------------------------------
+    function renderPrintingQueueView(completedOnly) {
+      const subs = getBranchSubmissions().filter(s => {
+        const isDone = ['Printed', 'Ready for Collection', 'Collected'].includes(s.status);
+        return completedOnly ? isDone : true;
+      });
+
+      return `
+        <div class="bg-white rounded-2xl border border-slate-200 luxury-shadow overflow-hidden animate-fade-in">
+          <div class="px-6 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="font-extrabold text-base text-slate-900">${completedOnly ? 'Completed Printing History' : 'All Printing Jobs & Operations Queue'}</h3>
+              <p class="text-xs text-slate-500">Click "Manage Job" to update status (7 stages), print copies, or record GH₵ payments.</p>
+            </div>
+            <span class="px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 text-xs font-extrabold">${subs.length} Record(s)</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-900 text-white uppercase text-[10px] tracking-wider">
+                  <th class="py-3.5 px-4">Job ID & Custom Name</th>
+                  <th class="py-3.5 px-4">Sender</th>
+                  <th class="py-3.5 px-4">Service & Specs</th>
+                  <th class="py-3.5 px-4">Amount / Paid (GH₵)</th>
+                  <th class="py-3.5 px-4">Status</th>
+                  <th class="py-3.5 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                ${subs.map(s => {
+                  const bal = Math.max(0, s.billing.totalAmount - s.billing.amountPaid);
+                  return `
+                    <tr class="hover:bg-slate-50">
+                      <td class="py-3.5 px-4">
+                        <div class="font-extrabold text-slate-900">${s.customName}</div>
+                        <div class="font-mono text-[10px] text-slate-400">${s.id} • ${s.date}</div>
+                      </td>
+                      <td class="py-3.5 px-4 font-semibold text-slate-700">${s.senderName}</td>
+                      <td class="py-3.5 px-4">
+                        <div class="font-bold text-slate-800">${s.billing.serviceType}</div>
+                        <div class="text-[11px] text-slate-500">${s.billing.copies} copies × ${s.billing.pages} pgs</div>
+                      </td>
+                      <td class="py-3.5 px-4 font-mono">
+                        <div class="font-bold text-slate-900">Total: ₵${s.billing.totalAmount.toFixed(2)}</div>
+                        <div class="text-[11px] ${bal > 0 ? 'text-rose-600 font-bold' : 'text-emerald-600'}">
+                          ${bal > 0 ? `Bal: ₵${bal.toFixed(2)}` : 'Paid in Full'}
+                        </div>
+                      </td>
+                      <td class="py-3.5 px-4">${statusBadgeHTML(s.status)}</td>
+                      <td class="py-3.5 px-4 text-right">
+                        <div class="inline-flex gap-1.5">
+                          <button onclick="openDirectDayFolder(${s.month}, ${s.day})" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold" title="Open Gallery">
+                            <i class="fa-solid fa-images"></i>
+                          </button>
+                          <button onclick="openSubmissionModal('${s.id}')" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold">
+                            Manage Job
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    // -------------------------------------------------------------------------
+    // VIEW 5: FINANCIAL & MONEY MANAGEMENT (GH₵)
+    // -------------------------------------------------------------------------
+    function renderMoneyManagementView() {
+      const subs = getBranchSubmissions();
+      const totalBilled = subs.reduce((a, s) => a + s.billing.totalAmount, 0);
+      const totalCollected = subs.reduce((a, s) => a + s.billing.amountPaid, 0);
+      const totalOutstanding = Math.max(0, totalBilled - totalCollected);
+
+      return `
+        <div class="space-y-6 animate-fade-in">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 luxury-shadow">
+              <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Total Billed Revenue</span>
+              <div class="text-2xl font-extrabold font-mono text-slate-900 mt-2">GH₵ ${totalBilled.toFixed(2)}</div>
+            </div>
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 luxury-shadow">
+              <span class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-600">Confirmed Payments Collected</span>
+              <div class="text-2xl font-extrabold font-mono text-emerald-600 mt-2">GH₵ ${totalCollected.toFixed(2)}</div>
+            </div>
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 luxury-shadow">
+              <span class="text-[11px] font-extrabold uppercase tracking-wider text-rose-600">Outstanding Customer Balances</span>
+              <div class="text-2xl font-extrabold font-mono text-rose-600 mt-2">GH₵ ${totalOutstanding.toFixed(2)}</div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200 luxury-shadow overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+              <h4 class="font-extrabold text-sm text-slate-900">Job-Linked Financial Ledger (GH₵)</h4>
+              <span class="text-xs text-slate-500">Only actual charges entered by authorized staff are counted</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-slate-900 text-white uppercase text-[10px] tracking-wider">
+                    <th class="py-3.5 px-4">Job ID</th>
+                    <th class="py-3.5 px-4">Sender</th>
+                    <th class="py-3.5 px-4">Service Type</th>
+                    <th class="py-3.5 px-4">Qty × Unit</th>
+                    <th class="py-3.5 px-4">Total (GH₵)</th>
+                    <th class="py-3.5 px-4">Paid (GH₵)</th>
+                    <th class="py-3.5 px-4">Balance</th>
+                    <th class="py-3.5 px-4">Method</th>
+                    <th class="py-3.5 px-4 text-right">Edit</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  ${subs.map(s => {
+                    const bal = Math.max(0, s.billing.totalAmount - s.billing.amountPaid);
+                    return `
+                      <tr class="hover:bg-slate-50">
+                        <td class="py-3.5 px-4 font-mono font-bold text-blue-600">${s.id}</td>
+                        <td class="py-3.5 px-4 font-bold text-slate-900">${s.senderName}</td>
+                        <td class="py-3.5 px-4">${s.billing.serviceType}</td>
+                        <td class="py-3.5 px-4 font-mono">${s.billing.copies} × ₵${s.billing.unitPrice.toFixed(2)}</td>
+                        <td class="py-3.5 px-4 font-mono font-bold">₵${s.billing.totalAmount.toFixed(2)}</td>
+                        <td class="py-3.5 px-4 font-mono font-bold text-emerald-600">₵${s.billing.amountPaid.toFixed(2)}</td>
+                        <td class="py-3.5 px-4 font-mono font-bold ${bal > 0 ? 'text-rose-600' : 'text-slate-400'}">₵${bal.toFixed(2)}</td>
+                        <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded bg-slate-100 font-bold text-[10px]">${s.billing.paymentMethod}</span></td>
+                        <td class="py-3.5 px-4 text-right">
+                          <button onclick="openSubmissionModal('${s.id}')" class="text-blue-600 font-bold hover:underline">Update</button>
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // -------------------------------------------------------------------------
+    // VIEW 6: EXPENSES & ESTIMATED PROFIT
+    // -------------------------------------------------------------------------
+    function renderExpensesView() {
+      const subs = getBranchSubmissions();
+      const exps = getBranchExpenses();
+      const income = subs.reduce((a, s) => a + s.billing.amountPaid, 0);
+      const totalExp = exps.reduce((a, e) => a + e.amount, 0);
+      const profit = income - totalExp;
+
+      return `
+        <div class="space-y-6 animate-fade-in">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 luxury-shadow">
+              <span class="text-[11px] font-extrabold uppercase text-slate-500">Total Collected Income</span>
+              <div class="text-2xl font-extrabold font-mono text-emerald-600 mt-1">GH₵ ${income.toFixed(2)}</div>
+            </div>
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 luxury-shadow">
+              <span class="text-[11px] font-extrabold uppercase text-slate-500">Total Branch Expenses</span>
+              <div class="text-2xl font-extrabold font-mono text-rose-600 mt-1">GH₵ ${totalExp.toFixed(2)}</div>
+            </div>
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 luxury-shadow">
+              <span class="text-[11px] font-extrabold uppercase text-slate-500">Estimated Net Profit</span>
+              <div class="text-2xl font-extrabold font-mono ${profit >= 0 ? 'text-blue-600' : 'text-rose-600'} mt-1">GH₵ ${profit.toFixed(2)}</div>
+            </div>
+          </div>
+
+          <!-- Add Expense Form -->
+          <div class="bg-white rounded-2xl p-6 border border-slate-200 luxury-shadow">
+            <h4 class="font-extrabold text-sm text-slate-900 mb-4">Record Operational Expense</h4>
+            <form onsubmit="handleAddExpense(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+              <select id="exp-cat" class="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold">
+                <option>Paper Stock & Card</option>
+                <option>Toner & Ink Cartridges</option>
+                <option>Machine Maintenance</option>
+                <option>Utilities & Power</option>
+                <option>Other Operational Expense</option>
+              </select>
+              <input type="text" id="exp-desc" required placeholder="Expense description..."
+                class="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs" />
+              <input type="number" step="0.01" id="exp-amt" required placeholder="Amount (GH₵)"
+                class="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-mono" />
+              <button type="submit" class="py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold">
+                + Add Expense
+              </button>
+            </form>
+          </div>
+
+          <!-- Expenses Table -->
+          <div class="bg-white rounded-2xl border border-slate-200 luxury-shadow overflow-hidden">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-900 text-white uppercase text-[10px] tracking-wider">
+                  <th class="py-3.5 px-5">Date</th>
+                  <th class="py-3.5 px-5">Category</th>
+                  <th class="py-3.5 px-5">Description</th>
+                  <th class="py-3.5 px-5">Recorded By</th>
+                  <th class="py-3.5 px-5 text-right">Amount (GH₵)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                ${exps.map(e => `
+                  <tr>
+                    <td class="py-3.5 px-5 font-mono">${e.date}</td>
+                    <td class="py-3.5 px-5 font-bold text-slate-800">${e.category}</td>
+                    <td class="py-3.5 px-5 text-slate-600">${e.description}</td>
+                    <td class="py-3.5 px-5">${e.recordedBy}</td>
+                    <td class="py-3.5 px-5 text-right font-mono font-bold text-rose-600">GH₵ ${e.amount.toFixed(2)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function handleAddExpense(e) {
+      e.preventDefault();
+      const category = document.getElementById('exp-cat').value;
+      const description = document.getElementById('exp-desc').value.trim();
+      const amount = parseFloat(document.getElementById('exp-amt').value) || 0;
+
+      appState.expenses.unshift({
+        id: `EXP-${Date.now().toString().slice(-4)}`,
+        branchId: currentSession.branchId,
+        date: appState.todayStr,
+        category,
+        description,
+        amount,
+        recordedBy: currentSession.user.fullName
+      });
+      logActivity(currentSession.branchId, currentSession.user.fullName, `Recorded expense: ${description} (GH₵ ${amount.toFixed(2)})`, category);
+      saveState();
+      showToast('Expense recorded successfully.', 'success');
+      navigateTo('expenses');
+    }
+
+    // -------------------------------------------------------------------------
+    // VIEW 7: REPORTS & ANALYTICS, SENDER MGMT, STAFF MGMT, SETTINGS
+    // -------------------------------------------------------------------------
+    function renderReportsAnalyticsView() {
+      const subs = getBranchSubmissions();
+      const byService = {};
+      subs.forEach(s => {
+        const sv = s.billing.serviceType;
+        if (!byService[sv]) byService[sv] = { count: 0, revenue: 0 };
+        byService[sv].count += 1;
+        byService[sv].revenue += s.billing.amountPaid;
+      });
+
+      return `
+        <div class="space-y-6 animate-fade-in">
+          <div class="bg-white rounded-2xl p-6 border border-slate-200 luxury-shadow">
+            <h3 class="font-extrabold text-base text-slate-900 mb-1">Revenue Breakdown by Printing Service</h3>
+            <p class="text-xs text-slate-500 mb-5">Aggregated performance for ${appState.branches[currentSession.branchId].name}</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              ${Object.entries(byService).map(([sv, data]) => `
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                  <span class="text-xs font-extrabold text-blue-700 block">${sv}</span>
+                  <div class="text-xl font-extrabold font-mono text-slate-900 mt-2">GH₵ ${data.revenue.toFixed(2)}</div>
+                  <span class="text-[11px] text-slate-500">${data.count} completed/active job(s)</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSenderManagementView() {
+      const subs = getBranchSubmissions();
+      const uniqueSenderIds = [...new Set(subs.map(s => s.senderId))];
+      const branchSenders = appState.senders.filter(snd => uniqueSenderIds.includes(snd.id));
+
+      return `
+        <div class="bg-white rounded-2xl border border-slate-200 luxury-shadow overflow-hidden animate-fade-in">
+          <div class="px-6 py-4 border-b border-slate-100">
+            <h3 class="font-extrabold text-base text-slate-900">Branch Customers & Senders (${branchSenders.length})</h3>
+            <p class="text-xs text-slate-500">Customers who have submitted files to this branch</p>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-900 text-white uppercase text-[10px] tracking-wider">
+                  <th class="py-3.5 px-5">Sender ID</th>
+                  <th class="py-3.5 px-5">Customer Name</th>
+                  <th class="py-3.5 px-5">Submissions to Branch</th>
+                  <th class="py-3.5 px-5">Total Files</th>
+                  <th class="py-3.5 px-5">Total Paid (GH₵)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                ${branchSenders.map(snd => {
+                  const sSubs = subs.filter(x => x.senderId === snd.id);
+                  const totalFiles = sSubs.reduce((a, x) => a + x.files.length, 0);
+                  const paid = sSubs.reduce((a, x) => a + x.billing.amountPaid, 0);
+                  return `
+                    <tr>
+                      <td class="py-3.5 px-5 font-mono font-bold text-blue-600">${snd.id}</td>
+                      <td class="py-3.5 px-5 font-extrabold text-slate-900">${snd.name}</td>
+                      <td class="py-3.5 px-5 font-bold">${sSubs.length}</td>
+                      <td class="py-3.5 px-5">${totalFiles} files</td>
+                      <td class="py-3.5 px-5 font-mono font-bold text-emerald-600">GH₵ ${paid.toFixed(2)}</td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderStaffManagementView() {
+      const branchId = currentSession.branchId;
+      const branchStaff = appState.staff.filter(s => s.branchId === branchId);
+
+      return `
+        <div class="space-y-6 animate-fade-in">
+          <!-- Register New Operator Form -->
+          <div class="bg-white rounded-2xl p-6 border border-slate-200 luxury-shadow">
+            <h3 class="font-extrabold text-base text-slate-900 mb-1">Register Printing Operator / Staff</h3>
+            <p class="text-xs text-slate-500 mb-4">Staff registered here are bound exclusively to Branch Code <strong class="font-mono text-blue-600">${branchId}</strong>.</p>
+            <form onsubmit="handleRegisterOperator(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+              <input type="text" id="new-op-name" required placeholder="Staff Full Name"
+                class="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs" />
+              <input type="text" id="new-op-user" required placeholder="Username (e.g. kwesi.print)"
+                class="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs" />
+              <input type="password" id="new-op-pass" required placeholder="Private Password"
+                class="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs" />
+              <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700">
+                <input type="checkbox" id="new-op-fin" class="rounded text-blue-600" /> Allow Finance Access
+              </label>
+              <button type="submit" class="py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold">
+                + Register Operator
+              </button>
+            </form>
+          </div>
+
+          <!-- Staff Accounts & Permissions Table -->
+          <div class="bg-white rounded-2xl border border-slate-200 luxury-shadow overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100">
+              <h4 class="font-extrabold text-sm text-slate-900">Branch Staff & Granular Permissions</h4>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-slate-900 text-white uppercase text-[10px] tracking-wider">
+                    <th class="py-3.5 px-4">Staff Member</th>
+                    <th class="py-3.5 px-4">Role</th>
+                    <th class="py-3.5 px-4 text-center">Billing</th>
+                    <th class="py-3.5 px-4 text-center">Finance Reports</th>
+                    <th class="py-3.5 px-4 text-center">Delete Files</th>
+                    <th class="py-3.5 px-4 text-center">Daily Codes</th>
+                    <th class="py-3.5 px-4 text-right">Status / Control</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  ${branchStaff.map(st => {
+                    const isMgr = st.role === 'manager';
+                    return `
+                      <tr>
+                        <td class="py-3.5 px-4">
+                          <div class="font-extrabold text-slate-900">${st.fullName}</div>
+                          <div class="font-mono text-[11px] text-slate-500">${st.username} (${st.id})</div>
+                        </td>
+                        <td class="py-3.5 px-4 uppercase font-bold text-blue-600">${st.role}</td>
+                        ${['recordBilling', 'viewFinance', 'deleteFiles', 'manageCodes'].map(perm => `
+                          <td class="py-3.5 px-4 text-center">
+                            <input type="checkbox" ${st.permissions[perm] ? 'checked' : ''} ${isMgr ? 'disabled' : ''}
+                              onchange="toggleStaffPerm('${st.id}', '${perm}')"
+                              class="w-4 h-4 rounded text-blue-600 cursor-pointer" />
+                          </td>
+                        `).join('')}
+                        <td class="py-3.5 px-4 text-right">
+                          ${isMgr ? '<span class="text-[11px] font-bold text-slate-400">Branch Owner</span>' : `
+                            <div class="inline-flex gap-1.5">
+                              <button onclick="toggleStaffActive('${st.id}')" class="px-2.5 py-1 rounded-lg font-bold ${st.active ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">
+                                ${st.active ? 'Active' : 'Deactivated'}
+                              </button>
+                              <button onclick="removeStaff('${st.id}')" class="px-2.5 py-1 rounded-lg bg-red-50 text-red-600 font-bold">
+                                Remove
+                              </button>
+                            </div>
+                          `}
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function handleRegisterOperator(e) {
+      e.preventDefault();
+      const fullName = document.getElementById('new-op-name').value.trim();
+      const username = document.getElementById('new-op-user').value.trim().toLowerCase();
+      const password = document.getElementById('new-op-pass').value;
+      const viewFinance = document.getElementById('new-op-fin').checked;
+
+      appState.staff.push({
+        id: `STF-${Date.now().toString().slice(-4)}`,
+        branchId: currentSession.branchId,
+        fullName,
+        username,
+        password,
+        role: 'operator',
+        active: true,
+        permissions: {
+          viewFiles: true, updateStatus: true, recordBilling: true,
+          viewFinance, deleteFiles: false, manageCodes: false, manageStaff: false
+        }
+      });
+      logActivity(currentSession.branchId, currentSession.user.fullName, `Registered new printing operator: ${fullName}`, username);
+      saveState();
+      showToast(`Operator "${fullName}" registered for ${currentSession.branchId}!`, 'success');
+      navigateTo('staff-management');
+    }
+
+    function toggleStaffPerm(staffId, perm) {
+      const st = appState.staff.find(s => s.id === staffId);
+      if (!st) return;
+      st.permissions[perm] = !st.permissions[perm];
+      logActivity(currentSession.branchId, currentSession.user.fullName, `Updated ${perm} permission for ${st.fullName}`, st.id);
+      saveState();
+      showToast(`Updated permissions for ${st.fullName}`, 'info');
+    }
+
+    function toggleStaffActive(staffId) {
+      const st = appState.staff.find(s => s.id === staffId);
+      if (!st) return;
+      st.active = !st.active;
+      saveState();
+      navigateTo('staff-management');
+    }
+
+    function removeStaff(staffId) {
+      appState.staff = appState.staff.filter(s => s.id !== staffId);
+      saveState();
+      showToast('Staff account removed.', 'info');
+      navigateTo('staff-management');
+    }
+
+    function renderStorageSettingsView() {
+      const branch = appState.branches[currentSession.branchId];
+      const subs = getBranchSubmissions();
+      const totalFiles = subs.reduce((a, s) => a + s.files.length, 0);
+      const usedMB = (totalFiles * 3.2).toFixed(1);
+      const pct = Math.min(100, Math.round((usedMB / branch.storageQuotaMB) * 100));
+
+      return `
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 luxury-shadow space-y-6 animate-fade-in">
+          <div>
+            <h3 class="font-extrabold text-base text-slate-900">Cloud Storage & Archive Retention</h3>
+            <p class="text-xs text-slate-500">All submitted files are isolated under <span class="font-mono font-bold text-blue-600">BRANCH/${branch.branchId}/YEAR/MONTH/DAY</span></p>
+          </div>
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200">
+            <div class="flex justify-between text-xs font-bold mb-2">
+              <span>Cloud Object Storage Used: ${usedMB} MB of ${branch.storageQuotaMB} MB</span>
+              <span class="text-blue-600">${pct}%</span>
+            </div>
+            <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
+              <div class="bg-blue-600 h-full rounded-full" style="width: ${Math.max(4, pct)}%"></div>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <button onclick="showToast('Full branch cloud snapshot backup completed!', 'success')" class="px-4 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold">
+              <i class="fa-solid fa-cloud-arrow-down mr-1"></i> Trigger Cloud Backup Now
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderNotificationsView() {
+      const notifs = appState.notifications.filter(n => n.branchId === currentSession.branchId);
+      const acts = getBranchActivities();
+
+      return `
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in">
+          <div class="bg-white rounded-2xl p-6 border border-slate-200 luxury-shadow">
+            <h3 class="font-extrabold text-base text-slate-900 mb-4">Branch Notifications</h3>
+            <div class="space-y-3">
+              ${notifs.map(n => `
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70">
+                  <div class="flex justify-between items-center">
+                    <span class="font-extrabold text-xs text-blue-700">${n.title}</span>
+                    <span class="text-[10px] text-slate-400">${n.time}</span>
+                  </div>
+                  <p class="text-xs text-slate-600 mt-1">${n.msg}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-6 border border-slate-200 luxury-shadow">
+            <h3 class="font-extrabold text-base text-slate-900 mb-4">Immutable Security & Activity Audit Log</h3>
+            <div class="space-y-3 max-h-[500px] overflow-y-auto">
+              ${acts.map(a => `
+                <div class="p-3 rounded-xl border border-slate-100 text-xs">
+                  <div class="font-bold text-slate-900">${a.user}</div>
+                  <div class="text-slate-600 mt-0.5">${a.action}</div>
+                  <div class="font-mono text-[10px] text-slate-400 mt-1">${a.date} • ${a.time} • Ref: ${a.target}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderBranchSettingsView() {
+      const branch = appState.branches[currentSession.branchId];
+      return `
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 luxury-shadow max-w-2xl animate-fade-in">
+          <h3 class="font-extrabold text-base text-slate-900 mb-4">Branch Workspace Settings</h3>
+          <div class="space-y-4 text-xs">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Unique Branch Code (Immutable)</label>
+              <input type="text" value="${branch.branchId}" disabled class="w-full px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 font-mono font-bold text-blue-700" />
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Printing Press Name</label>
+              <input type="text" id="set-branch-name" value="${branch.name}" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 font-bold" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Location / Area</label>
+                <input type="text" id="set-branch-area" value="${branch.area}" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200" />
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">City</label>
+                <input type="text" id="set-branch-city" value="${branch.city}" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200" />
+              </div>
+            </div>
+            <button onclick="saveBranchDetails()" class="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-bold">Save Branch Info</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function saveBranchDetails() {
+      const branch = appState.branches[currentSession.branchId];
+      branch.name = document.getElementById('set-branch-name').value.trim();
+      branch.area = document.getElementById('set-branch-area').value.trim();
+      branch.city = document.getElementById('set-branch-city').value.trim();
+      saveState();
+      showToast('Branch profile updated.', 'success');
+      navigateTo('branch-settings');
+    }
+
+    // -------------------------------------------------------------------------
+    // VIEW 8: SENDER / CUSTOMER SUBMISSION WORKSPACE
+    // -------------------------------------------------------------------------
+    function renderSenderSubmitView() {
+      const allBranches = Object.values(appState.branches);
+      const selectedBranch = senderWorkflow.connectedBranchId ? appState.branches[senderWorkflow.connectedBranchId] : null;
+      const isCodeVerified = selectedBranch && senderWorkflow.verifiedDailyCode === selectedBranch.dailyCodes[appState.todayStr];
+
+      return `
+        <div class="max-w-4xl mx-auto space-y-6 animate-fade-in">
+          <!-- Step 1: Connect to Printing Press Branch -->
+          <div class="bg-white rounded-3xl p-6 border border-slate-200 luxury-shadow">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <span class="text-[10px] font-extrabold uppercase tracking-widest text-blue-600">STEP 1 OF 3</span>
+                <h3 class="text-lg font-extrabold text-slate-900">Select or Connect to a Printing Press</h3>
+              </div>
+              ${selectedBranch ? `<span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold"><i class="fa-solid fa-link mr-1"></i> Connected: ${selectedBranch.branchId}</span>` : ''}
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Option A: Select Registered Printing Press</label>
+                <select onchange="connectSenderToBranch(this.value)"
+                  class="w-full px-3.5 py-3 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-900 outline-none">
+                  <option value="">-- Choose a Printing Press --</option>
+                  ${allBranches.map(b => `<option value="${b.branchId}" ${senderWorkflow.connectedBranchId === b.branchId ? 'selected' : ''}>${b.name} (${b.area}, ${b.city}) — [${b.branchId}]</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Option B: Enter Unique Branch Code</label>
+                <div class="flex gap-2">
+                  <input type="text" id="snd-branch-code-input" value="${senderWorkflow.connectedBranchId || ''}" placeholder="e.g. FANTA-ACC"
+                    class="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-mono uppercase" />
+                  <button type="button" onclick="connectSenderToBranch(document.getElementById('snd-branch-code-input').value.trim().toUpperCase())"
+                    class="px-4 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800">
+                    Verify
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Verify Daily Submission Code -->
+          ${selectedBranch ? `
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 luxury-shadow animate-fade-in">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                <div>
+                  <span class="text-[10px] font-extrabold uppercase tracking-widest text-blue-600">STEP 2 OF 3</span>
+                  <h3 class="text-lg font-extrabold text-slate-900">Enter Today's Daily Submission Code for ${selectedBranch.name}</h3>
+                </div>
+                <button type="button" onclick="autoFillTodayCodeForDemo()"
+                  class="px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold border border-blue-200">
+                  <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Auto-Fill Today's Code (${selectedBranch.dailyCodes[appState.todayStr]})
+                </button>
+              </div>
+
+              <div class="flex flex-col sm:flex-row gap-3">
+                <input type="text" id="snd-daily-code-input" value="${senderWorkflow.verifiedDailyCode}" placeholder="Enter Branch Daily Code (e.g. PPH-8492)"
+                  class="flex-1 px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 font-mono text-sm uppercase font-bold" />
+                <button type="button" onclick="verifySenderDailyCode()"
+                  class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold">
+                  Unlock Upload Workspace
+                </button>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Step 3: Multi-File Upload Workspace -->
+          ${isCodeVerified ? `
+            <div class="bg-white rounded-3xl p-6 border border-blue-200 luxury-shadow animate-fade-in space-y-5">
+              <div>
+                <span class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600">STEP 3 OF 3 • DAILY CODE VERIFIED</span>
+                <h3 class="text-lg font-extrabold text-slate-900">Upload Documents & Pictures to ${selectedBranch.name}</h3>
+                <p class="text-xs text-slate-500">Your files will be routed to <strong>November → Day 19, 2026</strong>.</p>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Custom Submission Name (Helps operators identify your print job)</label>
+                <input type="text" id="snd-custom-sub-name" required placeholder="e.g. Final Year Project Thesis & Cover Page"
+                  class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:border-blue-600 outline-none" />
+              </div>
+
+              <!-- File Picker + Quick Sample Attachment Buttons -->
+              <div class="border-2 border-dashed border-blue-200 rounded-2xl p-6 text-center bg-blue-50/40">
+                <i class="fa-solid fa-cloud-arrow-up text-3xl text-blue-600 mb-2"></i>
+                <p class="text-xs font-bold text-slate-800">Select pictures (JPG, PNG), PDFs, Word (.docx), or PowerPoint (.pptx) files</p>
+                <div class="flex flex-wrap items-center justify-center gap-2.5 mt-4">
+                  <label class="cursor-pointer px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow">
+                    <i class="fa-solid fa-folder-plus mr-1"></i> Choose Device Files
+                    <input type="file" multiple accept="image/*,.pdf,.doc,.docx,.ppt,.pptx" onchange="handleDeviceFileSelect(event)" class="hidden" />
+                  </label>
+                  <button type="button" onclick="addSampleFileToStage('Poster_Design_Final.png', 'image', 'PNG', '3.1 MB', 'https://images.unsplash.com/photo-1572949645841-094f3a9c4c94?auto=format&fit=crop&w=800&q=80')"
+                    class="px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 hover:border-blue-400 text-xs font-bold text-slate-700">
+                    + Add Sample Image
+                  </button>
+                  <button type="button" onclick="addSampleFileToStage('Project_Dissertation_2026.pdf', 'pdf', 'PDF', '5.4 MB', '')"
+                    class="px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 hover:border-blue-400 text-xs font-bold text-slate-700">
+                    + Add Sample PDF
+                  </button>
+                </div>
+              </div>
+
+              <!-- Staged Files List -->
+              ${senderWorkflow.stagedFiles.length > 0 ? `
+                <div class="space-y-2">
+                  <h4 class="text-xs font-extrabold text-slate-700">Confirmed Files Ready to Submit (${senderWorkflow.stagedFiles.length})</h4>
+                  ${senderWorkflow.stagedFiles.map((f, idx) => `
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+                      <div class="flex items-center gap-2.5 min-w-0">
+                        <i class="fa-solid ${f.type === 'image' ? 'fa-image text-blue-600' : 'fa-file-pdf text-red-600'}"></i>
+                        <span class="font-bold truncate">${f.originalName}</span>
+                        <span class="font-mono text-[10px] text-slate-400">(${f.size})</span>
+                      </div>
+                      <button type="button" onclick="removeStagedFile(${idx})" class="text-red-500 hover:text-red-700 font-bold px-2">Remove</button>
+                    </div>
+                  `).join('')}
+                </div>
+              ` : ''}
+
+              <button type="button" onclick="submitSenderPackage()"
+                class="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-bold text-sm shadow-lg shadow-blue-600/25 transition">
+                <i class="fa-solid fa-paper-plane mr-1.5"></i> Confirm & Submit Files to Printing Press
+              </button>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    function connectSenderToBranch(branchId) {
+      if (!branchId || !appState.branches[branchId]) {
+        showToast('Branch Code not found. Please select a valid printing press.', 'error');
+        return;
+      }
+      senderWorkflow.connectedBranchId = branchId;
+      senderWorkflow.verifiedDailyCode = '';
+      showToast(`Connected to ${appState.branches[branchId].name}`, 'success');
+      navigateTo('sender-submit');
+    }
+
+    function autoFillTodayCodeForDemo() {
+      const b = appState.branches[senderWorkflow.connectedBranchId];
+      if (!b) return;
+      ensureTodayDailyCode(b.branchId);
+      const code = b.dailyCodes[appState.todayStr];
+      document.getElementById('snd-daily-code-input').value = code;
+      senderWorkflow.verifiedDailyCode = code;
+      showToast(`Daily Code ${code} verified!`, 'success');
+      navigateTo('sender-submit');
+    }
+
+    function verifySenderDailyCode() {
+      const b = appState.branches[senderWorkflow.connectedBranchId];
+      const entered = document.getElementById('snd-daily-code-input').value.trim().toUpperCase();
+      ensureTodayDailyCode(b.branchId);
+      if (entered !== b.dailyCodes[appState.todayStr]) {
+        showToast('Invalid or expired Daily Submission Code for this branch.', 'error');
+        return;
+      }
+      senderWorkflow.verifiedDailyCode = entered;
+      showToast('Daily Submission Code verified! Upload workspace unlocked.', 'success');
+      navigateTo('sender-submit');
+    }
+
+    function handleDeviceFileSelect(e) {
+      const files = Array.from(e.target.files || []);
+      files.forEach(file => {
+        const isImg = file.type.startsWith('image/');
+        const ext = file.name.split('.').pop().toUpperCase();
+        const sizeMB = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+        const url = isImg ? URL.createObjectURL(file) : '';
+        senderWorkflow.stagedFiles.push({
+          fileId: `FIL-${Date.now().toString().slice(-4)}${Math.floor(Math.random()*90)}`,
+          originalName: file.name,
+          type: isImg ? 'image' : (ext === 'PDF' ? 'pdf' : 'word'),
+          ext,
+          size: sizeMB,
+          previewUrl: url,
+          pagesPreview: `Uploaded document (${file.name}) • Print-ready`
+        });
+      });
+      navigateTo('sender-submit');
+    }
+
+    function addSampleFileToStage(originalName, type, ext, size, previewUrl) {
+      senderWorkflow.stagedFiles.push({
+        fileId: `FIL-${Date.now().toString().slice(-4)}${Math.floor(Math.random()*90)}`,
+        originalName,
+        type,
+        ext,
+        size,
+        previewUrl,
+        pagesPreview: 'High-resolution print-ready customer file'
+      });
+      navigateTo('sender-submit');
+    }
+
+    function removeStagedFile(idx) {
+      senderWorkflow.stagedFiles.splice(idx, 1);
+      navigateTo('sender-submit');
+    }
+
+    function submitSenderPackage() {
+      const customName = document.getElementById('snd-custom-sub-name').value.trim();
+      if (!customName) {
+        showToast('Please enter a custom submission name.', 'error');
+        return;
+      }
+      if (senderWorkflow.stagedFiles.length === 0) {
+        showToast('Please attach at least one file before submitting.', 'error');
+        return;
+      }
+
+      const branchId = senderWorkflow.connectedBranchId;
+      const branch = appState.branches[branchId];
+      const sender = currentSession.user;
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const subId = `SUB-2026-1119-${String(appState.submissions.length + 1).padStart(2, '0')}`;
+
+      const newSub = {
+        id: subId,
+        branchId,
+        senderId: sender.id,
+        senderName: sender.name,
+        customName,
+        dailyCode: senderWorkflow.verifiedDailyCode,
+        year: 2026,
+        month: 10, // November
+        day: 19,
+        date: appState.todayStr,
+        time: timeStr,
+        status: 'Received',
+        assignedTo: 'Unassigned',
+        billing: {
+          serviceType: 'Colour Printing',
+          copies: 1,
+          pages: senderWorkflow.stagedFiles.length,
+          unitPrice: 0,
+          totalAmount: 0,
+          amountPaid: 0,
+          paymentMethod: 'Unpaid',
+          paymentDate: appState.todayStr
+        },
+        files: [...senderWorkflow.stagedFiles]
+      };
+
+      appState.submissions.unshift(newSub);
+      logActivity(branchId, `${sender.name} (Sender)`, `Submitted "${customName}" (${newSub.files.length} files) via Daily Code ${senderWorkflow.verifiedDailyCode}`, subId);
+      addNotification(branchId, 'submission', 'New File Submission', `${sender.name} submitted "${customName}" (${newSub.files.length} file(s)).`);
+      saveState();
+
+      senderWorkflow.stagedFiles = [];
+      showToast(`Success! Submitted to ${branch.name} (Ref: ${subId})`, 'success');
+      navigateTo('sender-history');
+    }
+
+    function renderSenderHistoryView() {
+      const sender = currentSession.user;
+      const mySubs = appState.submissions.filter(s => s.senderId === sender.id);
+
+      return `
+        <div class="space-y-4 animate-fade-in">
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 luxury-shadow flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="font-extrabold text-base text-slate-900">My Cloud Submission History (${mySubs.length})</h3>
+              <p class="text-xs text-slate-500">Removing local files from your device never deletes the printing press's cloud copy.</p>
+            </div>
+            <button onclick="navigateTo('sender-submit')" class="px-4 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold">
+              + New File Submission
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            ${mySubs.map(s => {
+              const b = appState.branches[s.branchId];
+              return `
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 luxury-shadow space-y-3">
+                  <div class="flex items-center justify-between">
+                    <span class="font-mono text-xs font-bold text-blue-600">${s.id}</span>
+                    ${statusBadgeHTML(s.status)}
+                  </div>
+                  <div>
+                    <h4 class="font-extrabold text-base text-slate-900">${s.customName}</h4>
+                    <p class="text-xs text-slate-600 mt-0.5"><i class="fa-solid fa-building mr-1 text-slate-400"></i> ${b?.name || s.branchId} • ${s.date} (${s.time})</p>
+                  </div>
+                  <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
+                    ${s.files.map(f => `
+                      <div class="text-xs flex items-center justify-between text-slate-700">
+                        <span class="truncate font-semibold"><i class="fa-regular fa-file mr-1 text-blue-600"></i>${f.originalName}</span>
+                        <span class="font-mono text-[10px] text-slate-400">${f.size}</span>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSenderBranchesView() {
+      const branches = Object.values(appState.branches);
+      return `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 animate-fade-in">
+          ${branches.map(b => `
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 luxury-shadow flex flex-col justify-between gap-4">
+              <div>
+                <span class="font-mono text-xs font-extrabold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700">${b.branchId}</span>
+                <h4 class="text-lg font-extrabold text-slate-900 mt-2">${b.name}</h4>
+                <p class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-location-dot mr-1 text-blue-600"></i> ${b.area}, ${b.city}</p>
+              </div>
+              <button onclick="connectSenderToBranch('${b.branchId}')" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold">
+                Connect & Submit Files →
+              </button>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
