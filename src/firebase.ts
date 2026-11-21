@@ -1,6 +1,11 @@
 import { initializeApp, deleteApp, getApps, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
-import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
+import {
+  getFirestore,
+  initializeFirestore,
+  doc,
+  getDocFromServer
+} from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 import firebaseConfig from '../firebase-applet-config.json';
@@ -12,8 +17,25 @@ export const FIREBASE_CONSOLE_STORAGE_URL = `https://console.firebase.google.com
 
 export const app = initializeApp(firebaseConfig);
 
-// CRITICAL: Bind Firestore explicitly to the provisioned firestoreDatabaseId
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+// CRITICAL: Bind Firestore explicitly to the provisioned firestoreDatabaseId.
+// Force HTTP long-polling so buffering proxies, iframes, and mobile networks do not hang
+// for 10s on WebChannel streaming handshakes and drop into offline mode.
+function initFirestoreClient() {
+  try {
+    return initializeFirestore(
+      app,
+      {
+        experimentalForceLongPolling: true,
+        experimentalLongPollingOptions: { timeoutSeconds: 20 }
+      },
+      firebaseConfig.firestoreDatabaseId
+    );
+  } catch {
+    return getFirestore(app, firebaseConfig.firestoreDatabaseId);
+  }
+}
+
+export const db = initFirestoreClient();
 export const auth = getAuth(app);
 export const storage = getStorage(app);
 // Prevent Firebase Storage from hanging 10 minutes on unavailable buckets or CORS errors
@@ -58,6 +80,16 @@ export async function withSecondaryAuth<T>(fn: (secondaryAuth: Auth) => Promise<
   }
 }
 
+function isOfflineOrUnavailableError(error: unknown): boolean {
+  const code = (error as { code?: string })?.code || '';
+  const msg = error instanceof Error ? error.message : String(error);
+  return (
+    code === 'unavailable' ||
+    msg.includes('the client is offline') ||
+    msg.includes('client is offline')
+  );
+}
+
 /**
  * Startup connectivity check required by Firebase integration best practices.
  */
@@ -66,9 +98,19 @@ export async function testConnection(): Promise<boolean> {
     await getDocFromServer(doc(db, 'test', 'connection'));
     return true;
   } catch (error) {
-    if (error instanceof Error && error.message.includes('the client is offline')) {
-      console.error('Please check your Firebase configuration — Firestore client appears offline.');
-      return false;
+    if (isOfflineOrUnavailableError(error)) {
+      // Retry once briefly in case transport handshake is still warming up on mobile/proxied networks
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      try {
+        await getDocFromServer(doc(db, 'test', 'connection'));
+        return true;
+      } catch (retryError) {
+        if (isOfflineOrUnavailableError(retryError)) {
+          console.error('Please check your Firebase configuration — Firestore client appears offline.');
+          return false;
+        }
+        return true;
+      }
     }
     // Permission denied on /test/connection is expected when rules default-deny, proving server reachability.
     return true;
@@ -181,10 +223,15 @@ export function getFriendlyError(error: unknown): FriendlyError {
       message: 'For security, please enter your current password to verify your identity before updating.'
     };
   }
-  if (code === 'auth/network-request-failed' || raw.includes('network-request-failed') || raw.includes('client is offline')) {
+  if (
+    code === 'auth/network-request-failed' ||
+    code === 'unavailable' ||
+    raw.includes('network-request-failed') ||
+    raw.includes('client is offline')
+  ) {
     return {
       code: 'network-offline',
-      message: 'You appear to be offline or unable to reach Firebase. Please check your internet connection.'
+      message: 'You appear to be offline or unable to reach Firebase. Please check your internet connection and try again.'
     };
   }
   if (

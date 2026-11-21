@@ -86,15 +86,52 @@ function makeDocId(prefix: string): string {
 // AUTHENTICATION & ACCOUNT PROVISIONING
 // =============================================================================
 
+let activeRegistrationPromise: Promise<void> | null = null;
+
+function createDeferred(): { promise: Promise<void>; resolve: () => void } {
+  let resolveFn: () => void = () => {};
+  const promise = new Promise<void>((resolve) => {
+    resolveFn = resolve;
+  });
+  return { promise, resolve: resolveFn };
+}
+
+function isTransientOfflineError(error: unknown): boolean {
+  const code = (error as { code?: string })?.code || '';
+  const msg = error instanceof Error ? error.message : String(error);
+  return (
+    code === 'unavailable' ||
+    msg.includes('client is offline') ||
+    msg.includes('the client is offline')
+  );
+}
+
 export async function fetchUserProfile(uid: string): Promise<UserProfile | null> {
-  const path = `users/${uid}`;
-  try {
-    const snap = await getDoc(doc(db, 'users', uid));
-    if (!snap.exists()) return null;
-    return snap.data() as UserProfile;
-  } catch (error) {
-    handleFirestoreError(error, OperationType.GET, path);
+  if (activeRegistrationPromise) {
+    try {
+      await activeRegistrationPromise;
+    } catch {
+      // Registration itself will surface the error
+    }
   }
+
+  const path = `users/${uid}`;
+  const retryDelays = [700, 1500];
+
+  for (let attempt = 0; attempt <= retryDelays.length; attempt++) {
+    try {
+      const snap = await getDoc(doc(db, 'users', uid));
+      if (!snap.exists()) return null;
+      return snap.data() as UserProfile;
+    } catch (error) {
+      if (isTransientOfflineError(error) && attempt < retryDelays.length) {
+        await new Promise((resolve) => setTimeout(resolve, retryDelays[attempt]));
+        continue;
+      }
+      handleFirestoreError(error, OperationType.GET, path);
+    }
+  }
+  return null;
 }
 
 export interface RegisterManagerInput {
@@ -136,80 +173,89 @@ export async function registerManagerWithBranch(input: RegisterManagerInput): Pr
   }
 
   const email = buildStaffSyntheticEmail(username, branchId);
-  const cred = await createUserWithEmailAndPassword(auth, email, input.password);
-  const uid = cred.user.uid;
-
-  const { dateStr } = getGhanaDateParts();
-  const timeStr = formatGhanaTime();
-  const dailyCode = generateBranchDailyCode(branchId);
-  const actId = makeDocId('ACT');
-
-  const profileData: StaffUserProfile = {
-    uid,
-    role: 'manager',
-    branchId,
-    fullName,
-    username,
-    active: true,
-    permissions: { ...ALL_STAFF_PERMISSIONS }
-  };
-
-  const batch = writeBatch(db);
-  batch.set(doc(db, 'branchPublic', branchId), {
-    branchId,
-    name: pressName,
-    area,
-    city,
-    phone,
-    ownerUid: uid,
-    quotaFull: false,
-    createdAt: serverTimestamp()
-  });
-
-  batch.set(doc(db, 'branches', branchId), {
-    branchId,
-    name: pressName,
-    area,
-    city,
-    phone,
-    storageQuotaMB: 10240,
-    retentionDays: 365,
-    storageUsedBytes: 0,
-    ownerUid: uid,
-    createdAt: serverTimestamp()
-  });
-
-  batch.set(doc(db, 'users', uid), {
-    ...profileData,
-    createdAt: serverTimestamp()
-  });
-
-  batch.set(doc(db, 'branches', branchId, 'dailyCodes', dateStr), {
-    code: dailyCode,
-    date: dateStr,
-    branchId,
-    createdBy: fullName,
-    createdAt: serverTimestamp()
-  });
-
-  batch.set(doc(db, 'activities', actId), {
-    id: actId,
-    branchId,
-    user: `${fullName} (Manager)`,
-    action: `Registered new printing press branch "${pressName}"`,
-    target: branchId,
-    date: dateStr,
-    time: timeStr,
-    createdAt: serverTimestamp()
-  });
+  const regDeferred = createDeferred();
+  activeRegistrationPromise = regDeferred.promise;
 
   try {
-    await batch.commit();
-  } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, `branches/${branchId}`);
-  }
+    const cred = await createUserWithEmailAndPassword(auth, email, input.password);
+    const uid = cred.user.uid;
 
-  return { profile: profileData, branchId, dailyCode };
+    const { dateStr } = getGhanaDateParts();
+    const timeStr = formatGhanaTime();
+    const dailyCode = generateBranchDailyCode(branchId);
+    const actId = makeDocId('ACT');
+
+    const profileData: StaffUserProfile = {
+      uid,
+      role: 'manager',
+      branchId,
+      fullName,
+      username,
+      active: true,
+      permissions: { ...ALL_STAFF_PERMISSIONS }
+    };
+
+    const batch = writeBatch(db);
+    batch.set(doc(db, 'branchPublic', branchId), {
+      branchId,
+      name: pressName,
+      area,
+      city,
+      phone,
+      ownerUid: uid,
+      quotaFull: false,
+      createdAt: serverTimestamp()
+    });
+
+    batch.set(doc(db, 'branches', branchId), {
+      branchId,
+      name: pressName,
+      area,
+      city,
+      phone,
+      storageQuotaMB: 10240,
+      retentionDays: 365,
+      storageUsedBytes: 0,
+      ownerUid: uid,
+      createdAt: serverTimestamp()
+    });
+
+    batch.set(doc(db, 'users', uid), {
+      ...profileData,
+      createdAt: serverTimestamp()
+    });
+
+    batch.set(doc(db, 'branches', branchId, 'dailyCodes', dateStr), {
+      code: dailyCode,
+      date: dateStr,
+      branchId,
+      createdBy: fullName,
+      createdAt: serverTimestamp()
+    });
+
+    batch.set(doc(db, 'activities', actId), {
+      id: actId,
+      branchId,
+      user: `${fullName} (Manager)`,
+      action: `Registered new printing press branch "${pressName}"`,
+      target: branchId,
+      date: dateStr,
+      time: timeStr,
+      createdAt: serverTimestamp()
+    });
+
+    try {
+      await batch.commit();
+    } catch (error) {
+      await signOut(auth).catch(() => {});
+      handleFirestoreError(error, OperationType.WRITE, `branches/${branchId}`);
+    }
+
+    return { profile: profileData, branchId, dailyCode };
+  } finally {
+    activeRegistrationPromise = null;
+    regDeferred.resolve();
+  }
 }
 
 export async function signInStaff(
@@ -371,87 +417,96 @@ export async function registerSenderAccount(input: {
   let uid = '';
   let lastAuthErr: unknown = null;
 
-  for (let attempt = 0; attempt < 8; attempt++) {
-    const candidateNum = nextNum + attempt;
-    const candidateId = `SND-${candidateNum}`;
-    const email = buildSenderSyntheticEmail(candidateId);
-    try {
-      const cred = await createUserWithEmailAndPassword(auth, email, `${pin}${SENDER_PIN_SUFFIX}`);
-      uid = cred.user.uid;
-      assignedSenderId = candidateId;
-      assignedNum = candidateNum;
-      break;
-    } catch (err) {
-      const code = (err as { code?: string })?.code;
-      if (code === 'auth/email-already-in-use') {
-        lastAuthErr = err;
-        continue;
-      }
-      throw err;
-    }
-  }
+  const regDeferred = createDeferred();
+  activeRegistrationPromise = regDeferred.promise;
 
-  if (!uid || !assignedSenderId) {
-    throw lastAuthErr || new Error('Could not allocate a unique Sender ID. Please try again.');
-  }
-
-  const profile: SenderUserProfile = {
-    uid,
-    role: 'sender',
-    senderId: assignedSenderId,
-    name,
-    phone
-  };
-
-  // Atomically claim senderIds/{senderId}, advance counter, create users/{uid}
   try {
-    await runTransaction(db, async (tx) => {
-      const counterRef = doc(db, 'counters', 'senderId');
-      const claimRef = doc(db, 'senderIds', assignedSenderId);
-      const userRef = doc(db, 'users', uid);
-
-      const counterSnap = await tx.get(counterRef);
-      const existingNext = counterSnap.exists() ? Number(counterSnap.data().nextNumber || 1001) : 1001;
-      const newNext = Math.max(existingNext, assignedNum + 1);
-
-      if (!counterSnap.exists()) {
-        tx.set(counterRef, { nextNumber: newNext });
-      } else if (newNext > existingNext) {
-        tx.update(counterRef, { nextNumber: newNext });
+    for (let attempt = 0; attempt < 8; attempt++) {
+      const candidateNum = nextNum + attempt;
+      const candidateId = `SND-${candidateNum}`;
+      const email = buildSenderSyntheticEmail(candidateId);
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, `${pin}${SENDER_PIN_SUFFIX}`);
+        uid = cred.user.uid;
+        assignedSenderId = candidateId;
+        assignedNum = candidateNum;
+        break;
+      } catch (err) {
+        const code = (err as { code?: string })?.code;
+        if (code === 'auth/email-already-in-use') {
+          lastAuthErr = err;
+          continue;
+        }
+        throw err;
       }
-
-      tx.set(claimRef, {
-        uid,
-        senderId: assignedSenderId,
-        createdAt: serverTimestamp()
-      });
-
-      tx.set(userRef, {
-        ...profile,
-        createdAt: serverTimestamp()
-      });
-    });
-  } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, `users/${uid}`);
-  }
-
-  // Register non-PII login lookup docs for Name and Phone
-  const lookupKeys = [normalizeLookupKey('name', name), normalizeLookupKey('phone', phone)].filter(Boolean);
-  for (const key of lookupKeys) {
-    try {
-      const refDoc = doc(db, 'senderLookup', key);
-      const snap = await getDoc(refDoc);
-      if (!snap.exists()) {
-        await setDoc(refDoc, { senderId: assignedSenderId, ambiguous: false });
-      } else if (snap.data().senderId !== assignedSenderId && snap.data().ambiguous !== true) {
-        await updateDoc(refDoc, { ambiguous: true });
-      }
-    } catch {
-      // Lookup doc collision is non-fatal; Sender ID always works
     }
-  }
 
-  return profile;
+    if (!uid || !assignedSenderId) {
+      throw lastAuthErr || new Error('Could not allocate a unique Sender ID. Please try again.');
+    }
+
+    const profile: SenderUserProfile = {
+      uid,
+      role: 'sender',
+      senderId: assignedSenderId,
+      name,
+      phone
+    };
+
+    // Atomically claim senderIds/{senderId}, advance counter, create users/{uid}
+    try {
+      await runTransaction(db, async (tx) => {
+        const counterRef = doc(db, 'counters', 'senderId');
+        const claimRef = doc(db, 'senderIds', assignedSenderId);
+        const userRef = doc(db, 'users', uid);
+
+        const counterSnap = await tx.get(counterRef);
+        const existingNext = counterSnap.exists() ? Number(counterSnap.data().nextNumber || 1001) : 1001;
+        const newNext = Math.max(existingNext, assignedNum + 1);
+
+        if (!counterSnap.exists()) {
+          tx.set(counterRef, { nextNumber: newNext });
+        } else if (newNext > existingNext) {
+          tx.update(counterRef, { nextNumber: newNext });
+        }
+
+        tx.set(claimRef, {
+          uid,
+          senderId: assignedSenderId,
+          createdAt: serverTimestamp()
+        });
+
+        tx.set(userRef, {
+          ...profile,
+          createdAt: serverTimestamp()
+        });
+      });
+    } catch (error) {
+      await signOut(auth).catch(() => {});
+      handleFirestoreError(error, OperationType.WRITE, `users/${uid}`);
+    }
+
+    // Register non-PII login lookup docs for Name and Phone
+    const lookupKeys = [normalizeLookupKey('name', name), normalizeLookupKey('phone', phone)].filter(Boolean);
+    for (const key of lookupKeys) {
+      try {
+        const refDoc = doc(db, 'senderLookup', key);
+        const snap = await getDoc(refDoc);
+        if (!snap.exists()) {
+          await setDoc(refDoc, { senderId: assignedSenderId, ambiguous: false });
+        } else if (snap.data().senderId !== assignedSenderId && snap.data().ambiguous !== true) {
+          await updateDoc(refDoc, { ambiguous: true });
+        }
+      } catch {
+        // Lookup doc collision is non-fatal; Sender ID always works
+      }
+    }
+
+    return profile;
+  } finally {
+    activeRegistrationPromise = null;
+    regDeferred.resolve();
+  }
 }
 
 export async function signInSender(identifierInput: string, pinInput: string): Promise<SenderUserProfile> {
